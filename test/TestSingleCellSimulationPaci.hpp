@@ -63,6 +63,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <ctime>
 
 /* Include this section if to_string is not working in current compiler*/
 namespace patch
@@ -76,6 +77,8 @@ namespace patch
 }
 
 using namespace std;
+
+
 
 
 /*
@@ -93,17 +96,17 @@ public:
          * == Define a CVODE model ==
          *
          */
-        //boost::shared_ptr<RegularStimulus> p_stimulus;
+        boost::shared_ptr<RegularStimulus> p_stimulus;
         // The parameters are magnitude, duration, period, and start time of stimulus.
-        boost::shared_ptr<RegularStimulus> p_stimulus(new RegularStimulus(0, 2.0, 1000.0, 500));
+        //boost::shared_ptr<RegularStimulus> p_stimulus(new RegularStimulus(0, 2.0, 1000.0, 500));
         // Setup a CVODE model that has empty solver (which requires stimulus)
         boost::shared_ptr<AbstractIvpOdeSolver> p_solver;
         boost::shared_ptr<AbstractCvodeCell> p_model(new Cellpaci_hyttinen_aaltosetala_severi_ventricularVersionFromCellMLCvode(p_solver, p_stimulus));
 
         // Use default stimulus if p_stimulus not set
         // To check default stimulus: {{{p_model->HasCellMLDefaultStimulus()}}}
-        //boost::shared_ptr<RegularStimulus> p_regular_stim = p_model->UseCellMLDefaultStimulus();
-        //p_regular_stim->SetPeriod(1000.0);
+        boost::shared_ptr<RegularStimulus> p_regular_stim = p_model->UseCellMLDefaultStimulus();
+        p_regular_stim->SetPeriod(1000.0);
 
         /*
          * Some optional useful methods:
@@ -113,6 +116,8 @@ public:
          * {{{p_model->ForceUseOfNumericalJacobian();}}}
          *
          */
+        p_model->SetTolerances(1e-7,1e-9);
+
 
         /*
          * == Get Model Parameters ==
@@ -130,7 +135,9 @@ public:
         double toSet_gNa_, toSet_gCaL_, toSet_gK_;
         // Repeat simulation for each set of model parameters
         while (infile >> toSet_gNa_ >> toSet_gCaL_ >> toSet_gK_) {
-        	cout << "Test: " << toSet_gNa_ << toSet_gCaL_ << toSet_gK_ << ".\n";
+        	//cout << "Test: " << toSet_gNa_ << toSet_gCaL_ << toSet_gK_ << ".\n";
+        	printf("Testing ratio of original gNa_ %f; gCaL_ %f; gK_ %f. \n",toSet_gNa_,toSet_gCaL_,toSet_gK_);
+
 
             /*
              * == Change Model Parameters ==
@@ -140,20 +147,21 @@ public:
              * Instructions for parameters annotation can be found at [wiki:ChasteGuides/CodeGenerationFromCellML]
              *
              */
-
             // g_Na_
-            p_model->SetParameter("membrane_fast_sodium_current_conductance", 3671.2302);
+            p_model->SetParameter("membrane_fast_sodium_current_conductance", toSet_gNa_*3671.2302);
 
             // g_CaL_
-            p_model->SetParameter("membrane_L_type_calcium_current_conductance", 8.635702e-5);
+            p_model->SetParameter("membrane_L_type_calcium_current_conductance", toSet_gCaL_*8.635702e-5);
 
             // g_K1_
-            p_model->SetParameter("membrane_inward_rectifier_potassium_current_conductance", 28.1492);
+            p_model->SetParameter("membrane_inward_rectifier_potassium_current_conductance", toSet_gK_*28.1492);
             // g_Kr_
             p_model->SetParameter("membrane_rapid_delayed_rectifier_potassium_current_conductance", 29.8667);
             // g_Ks_
             p_model->SetParameter("membrane_slow_delayed_rectifier_potassium_current_conductance", 2.041);
 
+            // Time it
+            time_t timer_start = time(0);
 
             /*
              * == Run model to steady state ==
@@ -161,31 +169,37 @@ public:
              * TO BE UPDATED FOR SELF-STIMULUS MODEL
              *
              */
-
             SteadyStateRunner steady_runner(p_model);
-            steady_runner.SetMaxNumPaces(1000u);  // Default 1e5
-            //bool result;
-            //result = steady_runner.RunToSteadyState();
-            steady_runner.RunToSteadyState();
+            steady_runner.SetMaxNumPaces(100000u);  // Default 1e5
+            bool result;
+            result = steady_runner.RunToSteadyState();
+            //steady_runner.RunToSteadyState();  // If not checking Steady State.
+            // Get number of cell model 'paces/beats' that had to be evaluated.
+            //{{{steady_runner.GetNumEvaluations();}}}
 
             // Detect for steady state alternans
             //{{{SteadyStateRunner steady_runner(p_model, true);}}}
 
             // Check that the model has NOT reached steady state
-            //TS_ASSERT_EQUALS(result,false);
+            TS_ASSERT_EQUALS(result,true);
 
 
             /*
              * == Get detail for paces of interest ==
              *
              */
-            double max_timestep = 0.1;
+            double max_timestep = 0.01;
             p_model->SetMaxTimestep(max_timestep);
 
             double sampling_timestep = max_timestep;
             double start_time = 0.0;
-            double end_time = 3500.0;
+            double end_time = 10000.0;
             OdeSolution solution = p_model->Compute(start_time, end_time, sampling_timestep);
+
+            // Time it till here
+            time_t timer_end = time(0);
+            double time_taken = difftime(timer_end,timer_start);
+            cout << "Time taken: " << time_taken << " s.\n";
 
             /*
              * == Write the data out to a file ==
