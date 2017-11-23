@@ -1,5 +1,5 @@
 <?xml version='1.0'?>
-<model cmeta:id="ohara_rudy_2011" name="ohara_rudy_2011" xmlns="http://www.cellml.org/cellml/1.0#" xmlns:cellml="http://www.cellml.org/cellml/1.0#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#">
+<model cmeta:id="ohara_rudy_2011_dyHerg" name="ohara_rudy_2011_dyHerg" xmlns="http://www.cellml.org/cellml/1.0#" xmlns:cellml="http://www.cellml.org/cellml/1.0#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#">
     <units name="millisecond">
         <unit prefix="milli" units="second"/>
     </units>
@@ -3895,286 +3895,1631 @@ PhiCaK = 1{dimensionless}*vffrt*(0.75{dimensionless}*kss*exp(1{dimensionless}*vf
         </math>
     </component>
     <component name="IKr">
+        <!-- Conductance-->
         <variable cmeta:id="membrane_rapid_delayed_rectifier_potassium_current_conductance" initial_value="0.046" name="GKr_b" units="milliS_per_microF"/>
+        <!-- New state variables (ODEs)-->
+        <variable initial_value="0.999637" name="IC1" units="dimensionless"/>
+        <!-- y[39]-->
+        <variable initial_value="6.83208e-05" name="IC2" units="dimensionless"/>
+        <!-- y[40];-->
+        <variable initial_value="1.80145e-08" name="C1" units="dimensionless"/>
+        <!-- y[41];-->
+        <variable initial_value="8.26619e-05" name="C2" units="dimensionless"/>
+        <!-- y[42];-->
+        <variable initial_value="0.00015551" name="O" units="dimensionless"/>
+        <!-- y[43];-->
+        <variable initial_value="5.67623e-05" name="IO" units="dimensionless"/>
+        <!-- y[44];-->
+        <variable initial_value="0" name="IObound" units="dimensionless"/>
+        <!-- y[45];-->
+        <variable initial_value="0" name="Obound" units="dimensionless"/>
+        <!-- y[46];-->
+        <variable initial_value="0" name="Cbound" units="dimensionless"/>
+        <!-- y[47];-->
+        <variable initial_value="0" name="D" units="dimensionless"/>
+        <!-- y[48];
+ A lot of constants/variables-->
         <variable name="GKr" units="milliS_per_microF"/>
-        <variable name="xrss" units="dimensionless"/>
-        <variable name="txrf" units="millisecond"/>
-        <variable name="txrs" units="millisecond"/>
-        <variable name="Axrf" units="dimensionless"/>
-        <variable name="Axrs" units="dimensionless"/>
-        <variable initial_value="8.08e-6" name="xrf" units="dimensionless"/>
-        <variable initial_value="0.4550704887" name="xrs" units="dimensionless"/>
-        <variable name="xr" units="dimensionless"/>
-        <variable name="rkr" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A1" initial_value="0.0264" name="A1" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B1" initial_value="4.63E-05" name="B1" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q1" initial_value="4.843" name="q1" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A2" initial_value="4.99E-06" name="A2" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B2" initial_value="-0.004226" name="B2" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q2" initial_value="4.23" name="q2" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A3" initial_value="0.001214" name="A3" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B3" initial_value="0.008516" name="B3" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q3" initial_value="4.962" name="q3" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A4" initial_value="1.85E-05" name="A4" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B4" initial_value="-0.04641" name="B4" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q4" initial_value="3.769" name="q4" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A11" initial_value="0.0007868" name="A11" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B11" initial_value="1.54E-08" name="B11" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q11" initial_value="4.942" name="q11" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A21" initial_value="5.46E-06" name="A21" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B21" initial_value="-0.1688" name="B21" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q21" initial_value="4.156" name="q21" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A31" initial_value="0.005509" name="A31" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B31" initial_value="7.77E-09" name="B31" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q31" initial_value="4.22" name="q31" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A41" initial_value="0.001416" name="A41" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B41" initial_value="-0.02877" name="B41" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q41" initial_value="1.459" name="q41" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A51" initial_value="0.4492" name="A51" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B51" initial_value="0.008595" name="B51" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q51" initial_value="5" name="q51" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A52" initial_value="0.3181" name="A52" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B52" initial_value="3.61E-08" name="B52" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q52" initial_value="4.663" name="q52" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A53" initial_value="0.149" name="A53" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B53" initial_value="0.004668" name="B53" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q53" initial_value="2.412" name="q53" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A61" initial_value="0.01241" name="A61" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B61" initial_value="0.1725" name="B61" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q61" initial_value="5.568" name="q61" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A62" initial_value="0.3226" name="A62" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B62" initial_value="-0.0006575" name="B62" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q62" initial_value="5" name="q62" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_A63" initial_value="0.008978" name="A63" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_B63" initial_value="-0.02215" name="B63" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_q63" initial_value="5.682" name="q63" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_Kmax" initial_value="0" name="Kmax" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_Ku" initial_value="0" name="Ku" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_n" initial_value="1" name="n" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_halfmax" initial_value="1" name="halfmax" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_Kt" initial_value="3.50E-05" name="Kt" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_Vhalf" initial_value="1" name="Vhalf" units="millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_Temp" initial_value="31" name="Temp" units="dimensionless"/>
+        <!-- Those going in and out-->
         <variable name="v" public_interface="in" units="millivolt"/>
         <variable name="time" public_interface="in" units="millisecond"/>
         <variable name="celltype" public_interface="in" units="dimensionless"/>
         <variable name="EK" public_interface="in" units="millivolt"/>
         <variable name="ko" public_interface="in" units="millimolar"/>
         <variable cmeta:id="membrane_rapid_delayed_rectifier_potassium_current" name="IKr" public_interface="out" units="microA_per_microF"/>
+        <!-- Main ODEs!-->
         <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
                 <eq/>
-                <ci>xrss</ci>
                 <apply>
-                    <divide/>
-                    <cn cellml:units="dimensionless">1</cn>
-                    <apply>
-                        <plus/>
-                        <cn cellml:units="dimensionless">1</cn>
-                        <apply>
-                            <exp/>
-                            <apply>
-                                <divide/>
-                                <apply>
-                                    <minus/>
-                                    <apply>
-                                        <plus/>
-                                        <ci>v</ci>
-                                        <cn cellml:units="millivolt">8.337</cn>
-                                    </apply>
-                                </apply>
-                                <cn cellml:units="millivolt">6.789</cn>
-                            </apply>
-                        </apply>
-                    </apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>IC1</ci>
                 </apply>
-            </apply>
-            <apply>
-                <eq/>
-                <ci>txrf</ci>
-                <apply>
-                    <plus/>
-                    <cn cellml:units="millisecond">12.98</cn>
-                    <apply>
-                        <divide/>
-                        <cn cellml:units="millisecond">1</cn>
-                        <apply>
-                            <plus/>
-                            <apply>
-                                <times/>
-                                <cn cellml:units="dimensionless">0.3652</cn>
-                                <apply>
-                                    <exp/>
-                                    <apply>
-                                        <divide/>
-                                        <apply>
-                                            <minus/>
-                                            <ci>v</ci>
-                                            <cn cellml:units="millivolt">31.66</cn>
-                                        </apply>
-                                        <cn cellml:units="millivolt">3.869</cn>
-                                    </apply>
-                                </apply>
-                            </apply>
-                            <apply>
-                                <times/>
-                                <cn cellml:units="dimensionless" type="e-notation">4.123<sep/>-5</cn>
-                                <apply>
-                                    <exp/>
-                                    <apply>
-                                        <divide/>
-                                        <apply>
-                                            <minus/>
-                                            <apply>
-                                                <minus/>
-                                                <ci>v</ci>
-                                                <cn cellml:units="millivolt">47.78</cn>
-                                            </apply>
-                                        </apply>
-                                        <cn cellml:units="millivolt">20.38</cn>
-                                    </apply>
-                                </apply>
-                            </apply>
-                        </apply>
-                    </apply>
-                </apply>
-            </apply>
-            <apply>
-                <eq/>
-                <ci>txrs</ci>
-                <apply>
-                    <plus/>
-                    <cn cellml:units="millisecond">1.865</cn>
-                    <apply>
-                        <divide/>
-                        <cn cellml:units="millisecond">1</cn>
-                        <apply>
-                            <plus/>
-                            <apply>
-                                <times/>
-                                <cn cellml:units="dimensionless">0.06629</cn>
-                                <apply>
-                                    <exp/>
-                                    <apply>
-                                        <divide/>
-                                        <apply>
-                                            <minus/>
-                                            <ci>v</ci>
-                                            <cn cellml:units="millivolt">34.7</cn>
-                                        </apply>
-                                        <cn cellml:units="millivolt">7.355</cn>
-                                    </apply>
-                                </apply>
-                            </apply>
-                            <apply>
-                                <times/>
-                                <cn cellml:units="dimensionless" type="e-notation">1.128<sep/>-5</cn>
-                                <apply>
-                                    <exp/>
-                                    <apply>
-                                        <divide/>
-                                        <apply>
-                                            <minus/>
-                                            <apply>
-                                                <minus/>
-                                                <ci>v</ci>
-                                                <cn cellml:units="millivolt">29.74</cn>
-                                            </apply>
-                                        </apply>
-                                        <cn cellml:units="millivolt">25.94</cn>
-                                    </apply>
-                                </apply>
-                            </apply>
-                        </apply>
-                    </apply>
-                </apply>
-            </apply>
-            <apply>
-                <eq/>
-                <ci>Axrf</ci>
-                <apply>
-                    <divide/>
-                    <cn cellml:units="dimensionless">1</cn>
-                    <apply>
-                        <plus/>
-                        <cn cellml:units="dimensionless">1</cn>
-                        <apply>
-                            <exp/>
-                            <apply>
-                                <divide/>
-                                <apply>
-                                    <plus/>
-                                    <ci>v</ci>
-                                    <cn cellml:units="millivolt">54.81</cn>
-                                </apply>
-                                <cn cellml:units="millivolt">38.21</cn>
-                            </apply>
-                        </apply>
-                    </apply>
-                </apply>
-            </apply>
-            <apply>
-                <eq/>
-                <ci>Axrs</ci>
                 <apply>
                     <minus/>
-                    <cn cellml:units="dimensionless">1</cn>
-                    <ci>Axrf</ci>
-                </apply>
-            </apply>
-            <apply>
-                <eq/>
-                <apply>
-                    <diff/>
-                    <bvar>
-                        <ci>time</ci>
-                    </bvar>
-                    <ci>xrf</ci>
-                </apply>
-                <apply>
-                    <divide/>
                     <apply>
-                        <minus/>
-                        <ci>xrss</ci>
-                        <ci>xrf</ci>
-                    </apply>
-                    <ci>txrf</ci>
-                </apply>
-            </apply>
-            <apply>
-                <eq/>
-                <apply>
-                    <diff/>
-                    <bvar>
-                        <ci>time</ci>
-                    </bvar>
-                    <ci>xrs</ci>
-                </apply>
-                <apply>
-                    <divide/>
-                    <apply>
-                        <minus/>
-                        <ci>xrss</ci>
-                        <ci>xrs</ci>
-                    </apply>
-                    <ci>txrs</ci>
-                </apply>
-            </apply>
-            <apply>
-                <eq/>
-                <ci>xr</ci>
-                <apply>
-                    <plus/>
-                    <apply>
-                        <times/>
-                        <ci>Axrf</ci>
-                        <ci>xrf</ci>
-                    </apply>
-                    <apply>
-                        <times/>
-                        <ci>Axrs</ci>
-                        <ci>xrs</ci>
-                    </apply>
-                </apply>
-            </apply>
-            <apply>
-                <eq/>
-                <ci>rkr</ci>
-                <apply>
-                    <divide/>
-                    <apply>
-                        <times/>
+                        <plus/>
                         <apply>
-                            <divide/>
-                            <cn cellml:units="dimensionless">1</cn>
+                            <minus/>
                             <apply>
-                                <plus/>
-                                <cn cellml:units="dimensionless">1</cn>
+                                <minus/>
                                 <apply>
-                                    <exp/>
+                                    <times/>
+                                    <ci>A11</ci>
                                     <apply>
-                                        <divide/>
+                                        <exp/>
                                         <apply>
-                                            <plus/>
+                                            <times/>
+                                            <ci>B11</ci>
                                             <ci>v</ci>
-                                            <cn cellml:units="millivolt">55</cn>
                                         </apply>
-                                        <cn cellml:units="millivolt">75</cn>
+                                    </apply>
+                                    <ci>IC1</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <times/>
+                                                <apply>
+                                                    <minus/>
+                                                    <ci>Temp</ci>
+                                                    <cn cellml:units="dimensionless">20</cn>
+                                                </apply>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>q11</ci>
+                                                </apply>
+                                            </apply>
+                                            <cn cellml:units="dimensionless">10</cn>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                                <apply>
+                                    <times/>
+                                    <ci>A21</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <times/>
+                                            <ci>B21</ci>
+                                            <ci>v</ci>
+                                        </apply>
+                                    </apply>
+                                    <ci>IC2</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <times/>
+                                                <apply>
+                                                    <minus/>
+                                                    <ci>Temp</ci>
+                                                    <cn cellml:units="dimensionless">20</cn>
+                                                </apply>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>q21</ci>
+                                                </apply>
+                                            </apply>
+                                            <cn cellml:units="dimensionless">10</cn>
+                                        </apply>
                                     </apply>
                                 </apply>
                             </apply>
                         </apply>
-                        <cn cellml:units="dimensionless">1</cn>
+                        <apply>
+                            <times/>
+                            <ci>A51</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <times/>
+                                    <ci>B51</ci>
+                                    <ci>v</ci>
+                                </apply>
+                            </apply>
+                            <ci>C1</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <divide/>
+                                    <apply>
+                                        <times/>
+                                        <apply>
+                                            <minus/>
+                                            <ci>Temp</ci>
+                                            <cn cellml:units="dimensionless">20</cn>
+                                        </apply>
+                                        <apply>
+                                            <log/>
+                                            <ci>q51</ci>
+                                        </apply>
+                                    </apply>
+                                    <cn cellml:units="dimensionless">10</cn>
+                                </apply>
+                            </apply>
+                        </apply>
                     </apply>
                     <apply>
-                        <plus/>
-                        <cn cellml:units="dimensionless">1</cn>
+                        <times/>
+                        <ci>A61</ci>
+                        <apply>
+                            <exp/>
+                            <apply>
+                                <times/>
+                                <ci>B61</ci>
+                                <ci>v</ci>
+                            </apply>
+                        </apply>
+                        <ci>IC1</ci>
                         <apply>
                             <exp/>
                             <apply>
                                 <divide/>
                                 <apply>
-                                    <minus/>
-                                    <ci>v</ci>
-                                    <cn cellml:units="millivolt">10</cn>
+                                    <times/>
+                                    <apply>
+                                        <minus/>
+                                        <ci>Temp</ci>
+                                        <cn cellml:units="dimensionless">20</cn>
+                                    </apply>
+                                    <apply>
+                                        <log/>
+                                        <ci>q61</ci>
+                                    </apply>
                                 </apply>
-                                <cn cellml:units="millivolt">30</cn>
+                                <cn cellml:units="dimensionless">10</cn>
                             </apply>
                         </apply>
                     </apply>
                 </apply>
             </apply>
+            <apply>
+                <eq/>
+                <apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>IC2</ci>
+                </apply>
+                <apply>
+                    <minus/>
+                    <apply>
+                        <plus/>
+                        <apply>
+                            <minus/>
+                            <apply>
+                                <minus/>
+                                <apply>
+                                    <times/>
+                                    <ci>A11</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <times/>
+                                            <ci>B11</ci>
+                                            <ci>v</ci>
+                                        </apply>
+                                    </apply>
+                                    <ci>IC1</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <times/>
+                                                <apply>
+                                                    <minus/>
+                                                    <ci>Temp</ci>
+                                                    <cn cellml:units="dimensionless">20</cn>
+                                                </apply>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>q11</ci>
+                                                </apply>
+                                            </apply>
+                                            <cn cellml:units="dimensionless">10</cn>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                                <apply>
+                                    <times/>
+                                    <ci>A21</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <times/>
+                                            <ci>B21</ci>
+                                            <ci>v</ci>
+                                        </apply>
+                                    </apply>
+                                    <ci>IC2</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <times/>
+                                                <apply>
+                                                    <minus/>
+                                                    <ci>Temp</ci>
+                                                    <cn cellml:units="dimensionless">20</cn>
+                                                </apply>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>q21</ci>
+                                                </apply>
+                                            </apply>
+                                            <cn cellml:units="dimensionless">10</cn>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                            </apply>
+                            <apply>
+                                <minus/>
+                                <apply>
+                                    <times/>
+                                    <ci>A3</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <times/>
+                                            <ci>B3</ci>
+                                            <ci>v</ci>
+                                        </apply>
+                                    </apply>
+                                    <ci>IC2</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <times/>
+                                                <apply>
+                                                    <minus/>
+                                                    <ci>Temp</ci>
+                                                    <cn cellml:units="dimensionless">20</cn>
+                                                </apply>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>q3</ci>
+                                                </apply>
+                                            </apply>
+                                            <cn cellml:units="dimensionless">10</cn>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                                <apply>
+                                    <times/>
+                                    <ci>A4</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <times/>
+                                            <ci>B4</ci>
+                                            <ci>v</ci>
+                                        </apply>
+                                    </apply>
+                                    <ci>IO</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <times/>
+                                                <apply>
+                                                    <minus/>
+                                                    <ci>Temp</ci>
+                                                    <cn cellml:units="dimensionless">20</cn>
+                                                </apply>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>q4</ci>
+                                                </apply>
+                                            </apply>
+                                            <cn cellml:units="dimensionless">10</cn>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                            </apply>
+                        </apply>
+                        <apply>
+                            <times/>
+                            <ci>A52</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <times/>
+                                    <ci>B52</ci>
+                                    <ci>v</ci>
+                                </apply>
+                            </apply>
+                            <ci>C2</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <divide/>
+                                    <apply>
+                                        <times/>
+                                        <apply>
+                                            <minus/>
+                                            <ci>Temp</ci>
+                                            <cn cellml:units="dimensionless">20</cn>
+                                        </apply>
+                                        <apply>
+                                            <log/>
+                                            <ci>q52</ci>
+                                        </apply>
+                                    </apply>
+                                    <cn cellml:units="dimensionless">10</cn>
+                                </apply>
+                            </apply>
+                        </apply>
+                    </apply>
+                    <apply>
+                        <times/>
+                        <ci>A62</ci>
+                        <apply>
+                            <exp/>
+                            <apply>
+                                <times/>
+                                <ci>B62</ci>
+                                <ci>v</ci>
+                            </apply>
+                        </apply>
+                        <ci>IC2</ci>
+                        <apply>
+                            <exp/>
+                            <apply>
+                                <divide/>
+                                <apply>
+                                    <times/>
+                                    <apply>
+                                        <minus/>
+                                        <ci>Temp</ci>
+                                        <cn cellml:units="dimensionless">20</cn>
+                                    </apply>
+                                    <apply>
+                                        <log/>
+                                        <ci>q62</ci>
+                                    </apply>
+                                </apply>
+                                <cn cellml:units="dimensionless">10</cn>
+                            </apply>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>C1</ci>
+                </apply>
+                <apply>
+                    <minus/>
+                    <apply>
+                        <minus/>
+                        <apply>
+                            <minus/>
+                            <apply>
+                                <times/>
+                                <ci>A1</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <times/>
+                                        <ci>B1</ci>
+                                        <ci>v</ci>
+                                    </apply>
+                                </apply>
+                                <ci>C1</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <divide/>
+                                        <apply>
+                                            <times/>
+                                            <apply>
+                                                <minus/>
+                                                <ci>Temp</ci>
+                                                <cn cellml:units="dimensionless">20</cn>
+                                            </apply>
+                                            <apply>
+                                                <log/>
+                                                <ci>q1</ci>
+                                            </apply>
+                                        </apply>
+                                        <cn cellml:units="dimensionless">10</cn>
+                                    </apply>
+                                </apply>
+                            </apply>
+                            <apply>
+                                <times/>
+                                <ci>A2</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <times/>
+                                        <ci>B2</ci>
+                                        <ci>v</ci>
+                                    </apply>
+                                </apply>
+                                <ci>C2</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <divide/>
+                                        <apply>
+                                            <times/>
+                                            <apply>
+                                                <minus/>
+                                                <ci>Temp</ci>
+                                                <cn cellml:units="dimensionless">20</cn>
+                                            </apply>
+                                            <apply>
+                                                <log/>
+                                                <ci>q2</ci>
+                                            </apply>
+                                        </apply>
+                                        <cn cellml:units="dimensionless">10</cn>
+                                    </apply>
+                                </apply>
+                            </apply>
+                        </apply>
+                    </apply>
+                    <apply>
+                        <minus/>
+                        <apply>
+                            <times/>
+                            <ci>A51</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <times/>
+                                    <ci>B51</ci>
+                                    <ci>v</ci>
+                                </apply>
+                            </apply>
+                            <ci>C1</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <divide/>
+                                    <apply>
+                                        <times/>
+                                        <apply>
+                                            <minus/>
+                                            <ci>Temp</ci>
+                                            <cn cellml:units="dimensionless">20</cn>
+                                        </apply>
+                                        <apply>
+                                            <log/>
+                                            <ci>q51</ci>
+                                        </apply>
+                                    </apply>
+                                    <cn cellml:units="dimensionless">10</cn>
+                                </apply>
+                            </apply>
+                        </apply>
+                        <apply>
+                            <times/>
+                            <ci>A61</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <times/>
+                                    <ci>B61</ci>
+                                    <ci>v</ci>
+                                </apply>
+                            </apply>
+                            <ci>IC1</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <divide/>
+                                    <apply>
+                                        <times/>
+                                        <apply>
+                                            <minus/>
+                                            <ci>Temp</ci>
+                                            <cn cellml:units="dimensionless">20</cn>
+                                        </apply>
+                                        <apply>
+                                            <log/>
+                                            <ci>q61</ci>
+                                        </apply>
+                                    </apply>
+                                    <cn cellml:units="dimensionless">10</cn>
+                                </apply>
+                            </apply>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>C2</ci>
+                </apply>
+                <apply>
+                    <minus/>
+                    <apply>
+                        <minus/>
+                        <apply>
+                            <minus/>
+                            <apply>
+                                <times/>
+                                <ci>A1</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <times/>
+                                        <ci>B1</ci>
+                                        <ci>v</ci>
+                                    </apply>
+                                </apply>
+                                <ci>C1</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <divide/>
+                                        <apply>
+                                            <times/>
+                                            <apply>
+                                                <minus/>
+                                                <ci>Temp</ci>
+                                                <cn cellml:units="dimensionless">20</cn>
+                                            </apply>
+                                            <apply>
+                                                <log/>
+                                                <ci>q1</ci>
+                                            </apply>
+                                        </apply>
+                                        <cn cellml:units="dimensionless">10</cn>
+                                    </apply>
+                                </apply>
+                            </apply>
+                            <apply>
+                                <times/>
+                                <ci>A2</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <times/>
+                                        <ci>B2</ci>
+                                        <ci>v</ci>
+                                    </apply>
+                                </apply>
+                                <ci>C2</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <divide/>
+                                        <apply>
+                                            <times/>
+                                            <apply>
+                                                <minus/>
+                                                <ci>Temp</ci>
+                                                <cn cellml:units="dimensionless">20</cn>
+                                            </apply>
+                                            <apply>
+                                                <log/>
+                                                <ci>q2</ci>
+                                            </apply>
+                                        </apply>
+                                        <cn cellml:units="dimensionless">10</cn>
+                                    </apply>
+                                </apply>
+                            </apply>
+                        </apply>
+                        <apply>
+                            <minus/>
+                            <apply>
+                                <times/>
+                                <ci>A31</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <times/>
+                                        <ci>B31</ci>
+                                        <ci>v</ci>
+                                    </apply>
+                                </apply>
+                                <ci>C2</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <divide/>
+                                        <apply>
+                                            <times/>
+                                            <apply>
+                                                <minus/>
+                                                <ci>Temp</ci>
+                                                <cn cellml:units="dimensionless">20</cn>
+                                            </apply>
+                                            <apply>
+                                                <log/>
+                                                <ci>q31</ci>
+                                            </apply>
+                                        </apply>
+                                        <cn cellml:units="dimensionless">10</cn>
+                                    </apply>
+                                </apply>
+                            </apply>
+                            <apply>
+                                <times/>
+                                <ci>A41</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <times/>
+                                        <ci>B41</ci>
+                                        <ci>v</ci>
+                                    </apply>
+                                </apply>
+                                <ci>O</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <divide/>
+                                        <apply>
+                                            <times/>
+                                            <apply>
+                                                <minus/>
+                                                <ci>Temp</ci>
+                                                <cn cellml:units="dimensionless">20</cn>
+                                            </apply>
+                                            <apply>
+                                                <log/>
+                                                <ci>q41</ci>
+                                            </apply>
+                                        </apply>
+                                        <cn cellml:units="dimensionless">10</cn>
+                                    </apply>
+                                </apply>
+                            </apply>
+                        </apply>
+                    </apply>
+                    <apply>
+                        <minus/>
+                        <apply>
+                            <times/>
+                            <ci>A52</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <times/>
+                                    <ci>B52</ci>
+                                    <ci>v</ci>
+                                </apply>
+                            </apply>
+                            <ci>C2</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <divide/>
+                                    <apply>
+                                        <times/>
+                                        <apply>
+                                            <minus/>
+                                            <ci>Temp</ci>
+                                            <cn cellml:units="dimensionless">20</cn>
+                                        </apply>
+                                        <apply>
+                                            <log/>
+                                            <ci>q52</ci>
+                                        </apply>
+                                    </apply>
+                                    <cn cellml:units="dimensionless">10</cn>
+                                </apply>
+                            </apply>
+                        </apply>
+                        <apply>
+                            <times/>
+                            <ci>A62</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <times/>
+                                    <ci>B62</ci>
+                                    <ci>v</ci>
+                                </apply>
+                            </apply>
+                            <ci>IC2</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <divide/>
+                                    <apply>
+                                        <times/>
+                                        <apply>
+                                            <minus/>
+                                            <ci>Temp</ci>
+                                            <cn cellml:units="dimensionless">20</cn>
+                                        </apply>
+                                        <apply>
+                                            <log/>
+                                            <ci>q62</ci>
+                                        </apply>
+                                    </apply>
+                                    <cn cellml:units="dimensionless">10</cn>
+                                </apply>
+                            </apply>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>O</ci>
+                </apply>
+                <apply>
+                    <minus/>
+                    <apply>
+                        <minus/>
+                        <apply>
+                            <minus/>
+                            <apply>
+                                <times/>
+                                <ci>A31</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <times/>
+                                        <ci>B31</ci>
+                                        <ci>v</ci>
+                                    </apply>
+                                </apply>
+                                <ci>C2</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <divide/>
+                                        <apply>
+                                            <times/>
+                                            <apply>
+                                                <minus/>
+                                                <ci>Temp</ci>
+                                                <cn cellml:units="dimensionless">20</cn>
+                                            </apply>
+                                            <apply>
+                                                <log/>
+                                                <ci>q31</ci>
+                                            </apply>
+                                        </apply>
+                                        <cn cellml:units="dimensionless">10</cn>
+                                    </apply>
+                                </apply>
+                            </apply>
+                            <apply>
+                                <times/>
+                                <ci>A41</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <times/>
+                                        <ci>B41</ci>
+                                        <ci>v</ci>
+                                    </apply>
+                                </apply>
+                                <ci>O</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <divide/>
+                                        <apply>
+                                            <times/>
+                                            <apply>
+                                                <minus/>
+                                                <ci>Temp</ci>
+                                                <cn cellml:units="dimensionless">20</cn>
+                                            </apply>
+                                            <apply>
+                                                <log/>
+                                                <ci>q41</ci>
+                                            </apply>
+                                        </apply>
+                                        <cn cellml:units="dimensionless">10</cn>
+                                    </apply>
+                                </apply>
+                            </apply>
+                        </apply>
+                        <apply>
+                            <minus/>
+                            <apply>
+                                <times/>
+                                <ci>A53</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <times/>
+                                        <ci>B53</ci>
+                                        <ci>v</ci>
+                                    </apply>
+                                </apply>
+                                <ci>O</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <divide/>
+                                        <apply>
+                                            <times/>
+                                            <apply>
+                                                <minus/>
+                                                <ci>Temp</ci>
+                                                <cn cellml:units="dimensionless">20</cn>
+                                            </apply>
+                                            <apply>
+                                                <log/>
+                                                <ci>q53</ci>
+                                            </apply>
+                                        </apply>
+                                        <cn cellml:units="dimensionless">10</cn>
+                                    </apply>
+                                </apply>
+                            </apply>
+                            <apply>
+                                <times/>
+                                <ci>A63</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <times/>
+                                        <ci>B63</ci>
+                                        <ci>v</ci>
+                                    </apply>
+                                </apply>
+                                <ci>IO</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <divide/>
+                                        <apply>
+                                            <times/>
+                                            <apply>
+                                                <minus/>
+                                                <ci>Temp</ci>
+                                                <cn cellml:units="dimensionless">20</cn>
+                                            </apply>
+                                            <apply>
+                                                <log/>
+                                                <ci>q63</ci>
+                                            </apply>
+                                        </apply>
+                                        <cn cellml:units="dimensionless">10</cn>
+                                    </apply>
+                                </apply>
+                            </apply>
+                        </apply>
+                    </apply>
+                    <apply>
+                        <minus/>
+                        <apply>
+                            <times/>
+                            <apply>
+                                <divide/>
+                                <apply>
+                                    <times/>
+                                    <ci>Kmax</ci>
+                                    <ci>Ku</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <times/>
+                                            <ci>n</ci>
+                                            <apply>
+                                                <log/>
+                                                <ci>D</ci>
+                                            </apply>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                                <apply>
+                                    <plus/>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <times/>
+                                            <ci>n</ci>
+                                            <apply>
+                                                <log/>
+                                                <ci>D</ci>
+                                            </apply>
+                                        </apply>
+                                    </apply>
+                                    <ci>halfmax</ci>
+                                </apply>
+                            </apply>
+                            <ci>O</ci>
+                        </apply>
+                        <apply>
+                            <times/>
+                            <ci>Ku</ci>
+                            <ci>Obound</ci>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>IO</ci>
+                </apply>
+                <apply>
+                    <minus/>
+                    <apply>
+                        <minus/>
+                        <apply>
+                            <plus/>
+                            <apply>
+                                <minus/>
+                                <apply>
+                                    <times/>
+                                    <ci>A3</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <times/>
+                                            <ci>B3</ci>
+                                            <ci>v</ci>
+                                        </apply>
+                                    </apply>
+                                    <ci>IC2</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <times/>
+                                                <apply>
+                                                    <minus/>
+                                                    <ci>Temp</ci>
+                                                    <cn cellml:units="dimensionless">20</cn>
+                                                </apply>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>q3</ci>
+                                                </apply>
+                                            </apply>
+                                            <cn cellml:units="dimensionless">10</cn>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                                <apply>
+                                    <times/>
+                                    <ci>A4</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <times/>
+                                            <ci>B4</ci>
+                                            <ci>v</ci>
+                                        </apply>
+                                    </apply>
+                                    <ci>IO</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <times/>
+                                                <apply>
+                                                    <minus/>
+                                                    <ci>Temp</ci>
+                                                    <cn cellml:units="dimensionless">20</cn>
+                                                </apply>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>q4</ci>
+                                                </apply>
+                                            </apply>
+                                            <cn cellml:units="dimensionless">10</cn>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                            </apply>
+                            <apply>
+                                <times/>
+                                <ci>A53</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <times/>
+                                        <ci>B53</ci>
+                                        <ci>v</ci>
+                                    </apply>
+                                </apply>
+                                <ci>O</ci>
+                                <apply>
+                                    <exp/>
+                                    <apply>
+                                        <divide/>
+                                        <apply>
+                                            <times/>
+                                            <apply>
+                                                <minus/>
+                                                <ci>Temp</ci>
+                                                <cn cellml:units="dimensionless">20</cn>
+                                            </apply>
+                                            <apply>
+                                                <log/>
+                                                <ci>q53</ci>
+                                            </apply>
+                                        </apply>
+                                        <cn cellml:units="dimensionless">10</cn>
+                                    </apply>
+                                </apply>
+                            </apply>
+                        </apply>
+                        <apply>
+                            <times/>
+                            <ci>A63</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <times/>
+                                    <ci>B63</ci>
+                                    <ci>v</ci>
+                                </apply>
+                            </apply>
+                            <ci>IO</ci>
+                            <apply>
+                                <exp/>
+                                <apply>
+                                    <divide/>
+                                    <apply>
+                                        <times/>
+                                        <apply>
+                                            <minus/>
+                                            <ci>Temp</ci>
+                                            <cn cellml:units="dimensionless">20</cn>
+                                        </apply>
+                                        <apply>
+                                            <log/>
+                                            <ci>q63</ci>
+                                        </apply>
+                                    </apply>
+                                    <cn cellml:units="dimensionless">10</cn>
+                                </apply>
+                            </apply>
+                        </apply>
+                    </apply>
+                    <apply>
+                        <minus/>
+                        <apply>
+                            <times/>
+                            <apply>
+                                <divide/>
+                                <apply>
+                                    <times/>
+                                    <ci>Kmax</ci>
+                                    <ci>Ku</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <times/>
+                                            <ci>n</ci>
+                                            <apply>
+                                                <log/>
+                                                <ci>D</ci>
+                                            </apply>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                                <apply>
+                                    <plus/>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <times/>
+                                            <ci>n</ci>
+                                            <apply>
+                                                <log/>
+                                                <ci>D</ci>
+                                            </apply>
+                                        </apply>
+                                    </apply>
+                                    <ci>halfmax</ci>
+                                </apply>
+                            </apply>
+                            <ci>IO</ci>
+                        </apply>
+                        <apply>
+                            <times/>
+                            <apply>
+                                <divide/>
+                                <apply>
+                                    <times/>
+                                    <ci>Ku</ci>
+                                    <ci>A53</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <times/>
+                                            <ci>B53</ci>
+                                            <ci>v</ci>
+                                        </apply>
+                                    </apply>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <times/>
+                                                <apply>
+                                                    <minus/>
+                                                    <ci>Temp</ci>
+                                                    <cn cellml:units="dimensionless">20</cn>
+                                                </apply>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>q53</ci>
+                                                </apply>
+                                            </apply>
+                                            <cn cellml:units="dimensionless">10</cn>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                                <apply>
+                                    <times/>
+                                    <ci>A63</ci>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <times/>
+                                            <ci>B63</ci>
+                                            <ci>v</ci>
+                                        </apply>
+                                    </apply>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <times/>
+                                                <apply>
+                                                    <minus/>
+                                                    <ci>Temp</ci>
+                                                    <cn cellml:units="dimensionless">20</cn>
+                                                </apply>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>q63</ci>
+                                                </apply>
+                                            </apply>
+                                            <cn cellml:units="dimensionless">10</cn>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                            </apply>
+                            <ci>IObound</ci>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>IObound</ci>
+                </apply>
+                <apply>
+                    <minus/>
+                    <apply>
+                        <plus/>
+                        <apply>
+                            <minus/>
+                            <apply>
+                                <times/>
+                                <apply>
+                                    <divide/>
+                                    <apply>
+                                        <times/>
+                                        <ci>Kmax</ci>
+                                        <ci>Ku</ci>
+                                        <apply>
+                                            <exp/>
+                                            <apply>
+                                                <times/>
+                                                <ci>n</ci>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>D</ci>
+                                                </apply>
+                                            </apply>
+                                        </apply>
+                                    </apply>
+                                    <apply>
+                                        <plus/>
+                                        <apply>
+                                            <exp/>
+                                            <apply>
+                                                <times/>
+                                                <ci>n</ci>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>D</ci>
+                                                </apply>
+                                            </apply>
+                                        </apply>
+                                        <ci>halfmax</ci>
+                                    </apply>
+                                </apply>
+                                <ci>IO</ci>
+                            </apply>
+                            <apply>
+                                <times/>
+                                <apply>
+                                    <divide/>
+                                    <apply>
+                                        <times/>
+                                        <ci>Ku</ci>
+                                        <ci>A53</ci>
+                                        <apply>
+                                            <exp/>
+                                            <apply>
+                                                <times/>
+                                                <ci>B53</ci>
+                                                <ci>v</ci>
+                                            </apply>
+                                        </apply>
+                                        <apply>
+                                            <exp/>
+                                            <apply>
+                                                <divide/>
+                                                <apply>
+                                                    <times/>
+                                                    <apply>
+                                                        <minus/>
+                                                        <ci>Temp</ci>
+                                                        <cn cellml:units="dimensionless">20</cn>
+                                                    </apply>
+                                                    <apply>
+                                                        <log/>
+                                                        <ci>q53</ci>
+                                                    </apply>
+                                                </apply>
+                                                <cn cellml:units="dimensionless">10</cn>
+                                            </apply>
+                                        </apply>
+                                    </apply>
+                                    <apply>
+                                        <times/>
+                                        <ci>A63</ci>
+                                        <apply>
+                                            <exp/>
+                                            <apply>
+                                                <times/>
+                                                <ci>B63</ci>
+                                                <ci>v</ci>
+                                            </apply>
+                                        </apply>
+                                        <apply>
+                                            <exp/>
+                                            <apply>
+                                                <divide/>
+                                                <apply>
+                                                    <times/>
+                                                    <apply>
+                                                        <minus/>
+                                                        <ci>Temp</ci>
+                                                        <cn cellml:units="dimensionless">20</cn>
+                                                    </apply>
+                                                    <apply>
+                                                        <log/>
+                                                        <ci>q63</ci>
+                                                    </apply>
+                                                </apply>
+                                                <cn cellml:units="dimensionless">10</cn>
+                                            </apply>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                                <ci>IObound</ci>
+                            </apply>
+                        </apply>
+                        <apply>
+                            <times/>
+                            <apply>
+                                <divide/>
+                                <ci>Kt</ci>
+                                <apply>
+                                    <plus/>
+                                    <cn cellml:units="dimensionless">1</cn>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <minus/>
+                                                <apply>
+                                                    <minus/>
+                                                    <ci>v</ci>
+                                                    <ci>Vhalf</ci>
+                                                </apply>
+                                            </apply>
+                                            <cn cellml:units="millivolt">6.789</cn>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                            </apply>
+                            <ci>Cbound</ci>
+                        </apply>
+                    </apply>
+                    <apply>
+                        <times/>
+                        <ci>Kt</ci>
+                        <ci>IObound</ci>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>Obound</ci>
+                </apply>
+                <apply>
+                    <minus/>
+                    <apply>
+                        <plus/>
+                        <apply>
+                            <minus/>
+                            <apply>
+                                <times/>
+                                <apply>
+                                    <divide/>
+                                    <apply>
+                                        <times/>
+                                        <ci>Kmax</ci>
+                                        <ci>Ku</ci>
+                                        <apply>
+                                            <exp/>
+                                            <apply>
+                                                <times/>
+                                                <ci>n</ci>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>D</ci>
+                                                </apply>
+                                            </apply>
+                                        </apply>
+                                    </apply>
+                                    <apply>
+                                        <plus/>
+                                        <apply>
+                                            <exp/>
+                                            <apply>
+                                                <times/>
+                                                <ci>n</ci>
+                                                <apply>
+                                                    <log/>
+                                                    <ci>D</ci>
+                                                </apply>
+                                            </apply>
+                                        </apply>
+                                        <ci>halfmax</ci>
+                                    </apply>
+                                </apply>
+                                <ci>O</ci>
+                            </apply>
+                            <apply>
+                                <times/>
+                                <ci>Ku</ci>
+                                <ci>Obound</ci>
+                            </apply>
+                        </apply>
+                        <apply>
+                            <times/>
+                            <apply>
+                                <divide/>
+                                <ci>Kt</ci>
+                                <apply>
+                                    <plus/>
+                                    <cn cellml:units="dimensionless">1</cn>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <minus/>
+                                                <apply>
+                                                    <minus/>
+                                                    <ci>v</ci>
+                                                    <ci>Vhalf</ci>
+                                                </apply>
+                                            </apply>
+                                            <cn cellml:units="millivolt">6.789</cn>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                            </apply>
+                            <ci>Cbound</ci>
+                        </apply>
+                    </apply>
+                    <apply>
+                        <times/>
+                        <ci>Kt</ci>
+                        <ci>Obound</ci>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>Cbound</ci>
+                </apply>
+                <apply>
+                    <minus/>
+                    <apply>
+                        <minus/>
+                        <apply>
+                            <minus/>
+                            <apply>
+                                <times/>
+                                <apply>
+                                    <divide/>
+                                    <ci>Kt</ci>
+                                    <apply>
+                                        <plus/>
+                                        <cn cellml:units="dimensionless">1</cn>
+                                        <apply>
+                                            <exp/>
+                                            <apply>
+                                                <divide/>
+                                                <apply>
+                                                    <minus/>
+                                                    <apply>
+                                                        <minus/>
+                                                        <ci>v</ci>
+                                                        <ci>Vhalf</ci>
+                                                    </apply>
+                                                </apply>
+                                                <cn cellml:units="millivolt">6.789</cn>
+                                            </apply>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                                <ci>Cbound</ci>
+                            </apply>
+                            <apply>
+                                <times/>
+                                <ci>Kt</ci>
+                                <ci>Obound</ci>
+                            </apply>
+                        </apply>
+                    </apply>
+                    <apply>
+                        <minus/>
+                        <apply>
+                            <times/>
+                            <apply>
+                                <divide/>
+                                <ci>Kt</ci>
+                                <apply>
+                                    <plus/>
+                                    <cn cellml:units="dimensionless">1</cn>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <minus/>
+                                                <apply>
+                                                    <minus/>
+                                                    <ci>v</ci>
+                                                    <ci>Vhalf</ci>
+                                                </apply>
+                                            </apply>
+                                            <cn cellml:units="millivolt">6.789</cn>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                            </apply>
+                            <ci>Cbound</ci>
+                        </apply>
+                        <apply>
+                            <times/>
+                            <ci>Kt</ci>
+                            <ci>IObound</ci>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>D</ci>
+                </apply>
+                <cn cellml:units="dimensionless">0</cn>
+            </apply>
+            <!-- Conductance-->
             <apply>
                 <eq/>
                 <ci>GKr</ci>
@@ -4208,6 +5553,7 @@ PhiCaK = 1{dimensionless}*vffrt*(0.75{dimensionless}*kss*exp(1{dimensionless}*vf
                     </otherwise>
                 </piecewise>
             </apply>
+            <!-- The current-->
             <apply>
                 <eq/>
                 <ci>IKr</ci>
@@ -4222,8 +5568,7 @@ PhiCaK = 1{dimensionless}*vffrt*(0.75{dimensionless}*kss*exp(1{dimensionless}*vf
                             <cn cellml:units="millimolar">5.4</cn>
                         </apply>
                     </apply>
-                    <ci>xr</ci>
-                    <ci>rkr</ci>
+                    <ci>O</ci>
                     <apply>
                         <minus/>
                         <ci>v</ci>
