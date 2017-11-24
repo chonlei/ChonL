@@ -57,20 +57,23 @@ public:
 
 #ifdef CHASTE_CVODE
 
-        boost::shared_ptr<RegularStimulus> p_stimulus;
+        //boost::shared_ptr<RegularStimulus> p_stimulus;
+	// Use CiPA stimulus (magnitudeOfStimulus, duration, period, startTime, stopTime = DBL_MAX)
+	boost::shared_ptr<RegularStimulus> p_stimulus(new RegularStimulus(-80, 0.5, 2000.0, 0.0));
         boost::shared_ptr<AbstractIvpOdeSolver> p_solver;
         boost::shared_ptr<AbstractCvodeCell> p_model(new Cellohara_rudy_2011_endo_dyHergFromCellMLCvode(p_solver, p_stimulus));
 
         /*
          * Once the model is set up we can tell it to use the the default stimulus from CellML,
          * (if one has been labelled, you get an exception if not), and return it.*/
-        boost::shared_ptr<RegularStimulus> p_regular_stim = p_model->UseCellMLDefaultStimulus();
+        //boost::shared_ptr<RegularStimulus> p_regular_stim = p_model->UseCellMLDefaultStimulus(); // Should not use the default one...
 
         /*
          * Now you can modify certain parameters of the stimulus function, such as the period
          */
 	// Set CL as the one CiPA use
-        p_regular_stim->SetPeriod(2000.0);
+        //p_regular_stim->SetPeriod(2000.0);
+	//p_regular_stim->SetStartTime(0.0);
 
         /*
          * == Changing Parameters in the Cell Model ==
