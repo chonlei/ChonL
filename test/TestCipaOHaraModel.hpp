@@ -69,7 +69,8 @@ public:
         /*
          * Now you can modify certain parameters of the stimulus function, such as the period
          */
-        p_regular_stim->SetPeriod(1000.0);
+	// Set CL as the one CiPA use
+        p_regular_stim->SetPeriod(2000.0);
 
         /*
          * == Changing Parameters in the Cell Model ==
@@ -84,6 +85,19 @@ public:
          */
         //p_model->SetParameter("membrane_slow_delayed_rectifier_potassium_current_conductance", 0.07);
 
+
+	// Check dy at t=0
+	//std::vector<double> states = p_model->GetstdVecStatVariables();
+	//TODO: set initial values to match CiPA one
+	double getTime = 0;
+	N_Vector Y;
+	Y = p_model->GetStateVariables();
+	N_Vector dY;
+	dY = p_model->GetStateVariables(); // Not the best way of initialising dY
+	p_model->EvaluateYDerivatives(getTime, Y, dY);
+	for (int i; i<48; i++) {
+		std::cout << NV_Ith_S(dY,i) << "\n"; //TODO: Print out for now, need to compare with CiPA output
+	}
 
 
         /*
@@ -106,7 +120,8 @@ public:
         double max_timestep = 0.1;
         p_model->SetMaxTimestep(max_timestep);
 
-        double sampling_timestep = max_timestep;
+	// Set sampling step size as the one CiPA use
+        double sampling_timestep = 1.0;
         double start_time = 0.0;
         double end_time = 1000.0;
         OdeSolution solution = p_model->Compute(start_time, end_time, sampling_timestep);
@@ -117,7 +132,7 @@ public:
          *
          * Write the data out to a file.
          */
-        solution.WriteToFile("TestCvodeCells","Shannon2004Cvode","ms");
+        solution.WriteToFile("TestCipaOHaraModel","OHaraDyHergCvode","ms");
 
         /*
          * == Calculating APD and Upstroke Velocity ==
@@ -126,9 +141,10 @@ public:
         std::vector<double> voltages = solution.GetVariableAtIndex(voltage_index);
         CellProperties cell_props(voltages, solution.rGetTimes());
 
-        double apd = cell_props.GetLastActionPotentialDuration(90);
+        //double apd = cell_props.GetLastActionPotentialDuration(90);
 
-        TS_ASSERT_DELTA(apd, 268.92, 1e-2);
+        //TS_ASSERT_DELTA(apd, 268.92, 1e-2);
+	
 #else
         std::cout << "Cvode is not enabled.\n";
 #endif
