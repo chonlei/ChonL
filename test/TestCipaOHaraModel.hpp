@@ -93,7 +93,7 @@ public:
 	 * Try to set initial values to match CiPA one
 	 *
 	 */
-	ifstream CiPA_stateVariables_file(".");
+	ifstream CiPA_stateVariables_file("."); //TODO: need to match the order!!!
 	double CiPA_stateVariable;
 	std::vector<double> CiPA_stateVariables;
 	while (CiPA_stateVariables_file>> CiPA_stateVariable ) {
