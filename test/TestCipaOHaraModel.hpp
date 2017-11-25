@@ -89,17 +89,41 @@ public:
         //p_model->SetParameter("membrane_slow_delayed_rectifier_potassium_current_conductance", 0.07);
 
 
+	/* == Read Model State Variable ==
+	 * Try to set initial values to match CiPA one
+	 *
+	 */
+	ifstream CiPA_stateVariables_file(".");
+	double CiPA_stateVariable;
+	std::vector<double> CiPA_stateVariables;
+	while (CiPA_stateVariables_file>> CiPA_stateVariable ) {
+		CiPA_stateVariables.push_back(CiPA_stateVariable);
+	}
+	CiPA_stateVariables_file.close();
+	/* == Re-set Model State Variable ==
+	 * Start with the state variablesthat CiPA use
+	 *
+	 */
+	p_model->SetStateVariables(CiPA_stateVariables);
+
+
 	// Check dy at t=0
 	//std::vector<double> states = p_model->GetstdVecStatVariables();
-	//TODO: set initial values to match CiPA one
 	double getTime = 0;
 	N_Vector Y;
 	Y = p_model->GetStateVariables();
 	N_Vector dY;
-	dY = p_model->GetStateVariables(); // Not the best way of initialising dY
+	dY = p_model->GetStateVariables(); //TODO: Not the best way of initialising dY
 	p_model->EvaluateYDerivatives(getTime, Y, dY);
 	for (int i; i<48; i++) {
 		std::cout << NV_Ith_S(dY,i) << "\n"; //TODO: Print out for now, need to compare with CiPA output
+	}
+
+	/* == Double check the state variable ==
+	 *
+	 */
+	for (unsigned i; i<CiPA_stateVariables.size(); i++) {
+		TS_ASSERT_DELTA(CiPA_stateVariables[i], p_model->GetStdVecStateVariables()[i], 1e-6);
 	}
 
 
