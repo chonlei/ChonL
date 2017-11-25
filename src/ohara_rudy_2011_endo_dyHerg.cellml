@@ -1103,7 +1103,8 @@
         <variable initial_value="0.6981071913" name="hf" units="dimensionless"/>
         <variable initial_value="0.6980895801" name="hs" units="dimensionless"/>
         <variable cmeta:id="membrane_fast_sodium_current_h_gate" name="h" units="dimensionless"/>
-        <variable cmeta:id="membrane_fast_sodium_current_conductance" initial_value="75" name="GNa" units="milliS_per_microF"/>
+        <!-- 75/1.045809e+00 = 71.71481599412512-->
+        <variable cmeta:id="membrane_fast_sodium_current_conductance" initial_value="71.71481599412512" name="GNa" units="milliS_per_microF"/>
         <variable cmeta:id="membrane_fast_sodium_current_shift_inactivation" initial_value="0" name="shift_INa_inact" units="millivolt"/>
         <variable name="jss" units="dimensionless"/>
         <variable name="tj" units="millisecond"/>
@@ -1664,7 +1665,8 @@
         <variable name="hLssp" units="dimensionless"/>
         <variable name="thLp" units="millisecond"/>
         <variable initial_value="0.2693065357" name="hLp" units="dimensionless"/>
-        <variable cmeta:id="membrane_persistent_sodium_current_conductance" initial_value="0.0075" name="GNaL_b" units="milliS_per_microF"/>
+        <!-- 0.0075/3.971290e-01 = 0.01888555104260832-->
+        <variable cmeta:id="membrane_persistent_sodium_current_conductance" initial_value="0.01888555104260832" name="GNaL_b" units="milliS_per_microF"/>
         <variable name="GNaL" units="milliS_per_microF"/>
         <variable name="fINaLp" units="dimensionless"/>
         <variable name="KmCaMK" public_interface="in" units="millimolar"/>
@@ -1892,7 +1894,8 @@
         </math>
     </component>
     <component name="Ito">
-        <variable cmeta:id="membrane_transient_outward_current_conductance" initial_value="0.02" name="Gto_b" units="milliS_per_microF"/>
+        <!-- 0.02/1.706770e+00 = 0.011718040509266042-->
+        <variable cmeta:id="membrane_transient_outward_current_conductance" initial_value="0.011718040509266042" name="Gto_b" units="milliS_per_microF"/>
         <variable name="ass" units="dimensionless"/>
         <variable name="ta" units="millisecond"/>
         <variable initial_value="0.001001097687" name="a" units="dimensionless"/>
@@ -2578,7 +2581,8 @@
     <component name="ICaL">
         <variable initial_value="0.002" name="Kmn" units="millimolar"/>
         <variable initial_value="1000" name="k2n" units="per_millisecond"/>
-        <variable cmeta:id="membrane_L_type_calcium_current_conductance" initial_value="0.0001" name="PCa_b" units="dimensionless"/>
+        <!-- 0.0001/1.020773e+00 = 9.796497360333787e-05-->
+        <variable cmeta:id="membrane_L_type_calcium_current_conductance" initial_value="9.796497360333787e-05" name="PCa_b" units="dimensionless"/>
         <variable name="dss" units="dimensionless"/>
         <variable initial_value="2.34e-9" name="d" units="dimensionless"/>
         <variable name="fss" units="dimensionless"/>
@@ -3895,8 +3899,9 @@ PhiCaK = 1{dimensionless}*vffrt*(0.75{dimensionless}*kss*exp(1{dimensionless}*vf
         </math>
     </component>
     <component name="IKr">
-        <!-- Conductance-->
-        <variable cmeta:id="membrane_rapid_delayed_rectifier_potassium_current_conductance" initial_value="0.046" name="GKr_b" units="milliS_per_microF"/>
+        <!-- Conductance
+ 0.046/9.874327e-01 = 0.04658545336811309-->
+        <variable cmeta:id="membrane_rapid_delayed_rectifier_potassium_current_conductance" initial_value="0.04658545336811309" name="GKr_b" units="milliS_per_microF"/>
         <!-- New state variables (ODEs)-->
         <variable initial_value="0.999637" name="IC1" units="dimensionless"/>
         <!-- y[39]-->
@@ -5579,7 +5584,8 @@ PhiCaK = 1{dimensionless}*vffrt*(0.75{dimensionless}*kss*exp(1{dimensionless}*vf
         </math>
     </component>
     <component name="IKs">
-        <variable cmeta:id="membrane_slow_delayed_rectifier_potassium_current_conductance" initial_value="0.0034" name="GKs_b" units="milliS_per_microF"/>
+        <!-- 0.0034/5.347594e-01 = 0.006357999504076038-->
+        <variable cmeta:id="membrane_slow_delayed_rectifier_potassium_current_conductance" initial_value="0.006357999504076038" name="GKs_b" units="milliS_per_microF"/>
         <variable name="GKs" units="milliS_per_microF"/>
         <variable name="xs1ss" units="dimensionless"/>
         <variable name="xs2ss" units="dimensionless"/>
@@ -5828,7 +5834,8 @@ PhiCaK = 1{dimensionless}*vffrt*(0.75{dimensionless}*kss*exp(1{dimensionless}*vf
     </component>
     <component name="IK1">
         <variable name="GK1" units="milliS_per_microF"/>
-        <variable cmeta:id="membrane_inward_rectifier_potassium_current_conductance" initial_value="0.1908" name="GK1_b" units="milliS_per_microF"/>
+        <!-- 0.1908/6.296422e-01 = 0.3030292442279123-->
+        <variable cmeta:id="membrane_inward_rectifier_potassium_current_conductance" initial_value="0.3030292442279123" name="GK1_b" units="milliS_per_microF"/>
         <variable name="xk1ss" units="dimensionless"/>
         <variable name="txk1" units="millisecond"/>
         <variable initial_value="0.9967597594" name="xk1" units="dimensionless"/>
