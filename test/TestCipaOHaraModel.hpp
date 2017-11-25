@@ -78,28 +78,25 @@ public:
         /*
          * == Changing Parameters in the Cell Model ==
          *
-         * You can also change any parameters that are labelled in the cell model.
-         *
-         * Instructions for annotating parameters can be found at [wiki:ChasteGuides/CodeGenerationFromCellML]
-         *
-         * Here we show how to change the parameter dictating the maximal conductance of the IKs current.
-         * Note this call actually leaves it unchanged from the default,
-         * you can experiment with changing it and examine the impact on APD.
          */
         //p_model->SetParameter("membrane_slow_delayed_rectifier_potassium_current_conductance", 0.07);
 
 
+	// Get the name of the state variables (just in case)
+	const std::vector<std::string> YName = p_model->rGetStateVariableNames();
+	//TODO: Missing Jrelp in the state variable!!!
 	/* == Read Model State Variable ==
 	 * Try to set initial values to match CiPA one
 	 *
 	 */
-	ifstream CiPA_stateVariables_file("."); //TODO: need to match the order!!!
+	/*ifstream CiPA_stateVariables_file("."); //TODO: need to match the order!!!
 	double CiPA_stateVariable;
 	std::vector<double> CiPA_stateVariables;
 	while (CiPA_stateVariables_file>> CiPA_stateVariable ) {
 		CiPA_stateVariables.push_back(CiPA_stateVariable);
 	}
-	CiPA_stateVariables_file.close();
+	CiPA_stateVariables_file.close();*/
+	std::vector<double> CiPA_stateVariables = p_model->GetStdVecStateVariables(); //TODO: remove this later.
 	/* == Re-set Model State Variable ==
 	 * Start with the state variablesthat CiPA use
 	 *
@@ -116,10 +113,11 @@ public:
 	dY = p_model->GetStateVariables(); //TODO: Not the best way of initialising dY
 	p_model->EvaluateYDerivatives(getTime, Y, dY);
 	for (int i; i<48; i++) {
-		std::cout << NV_Ith_S(dY,i) << "\n"; //TODO: Print out for now, need to compare with CiPA output
+		std::cout << YName[i] << ": " << NV_Ith_S(Y,i) << "\n"; //TODO: Print out for now, need to compare with CiPA output
 	}
 
 	/* == Double check the state variable ==
+	 * To make we loaded the state variables properly.
 	 *
 	 */
 	for (unsigned i; i<CiPA_stateVariables.size(); i++) {
