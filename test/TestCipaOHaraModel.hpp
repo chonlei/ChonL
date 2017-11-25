@@ -48,6 +48,11 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* This test is always run sequentially (never in parallel)*/
 #include "FakePetscSetup.hpp"
 
+// Standard libraries - might not need
+#include <iostream>
+#include <fstream>
+#include <string>
+
 
 class TestCipaOHaraModel : public CxxTest::TestSuite
 {
@@ -84,19 +89,18 @@ public:
 
 	// Get the name of the state variables (just in case)
 	const std::vector<std::string> YName = p_model->rGetStateVariableNames();
-	//TODO: Missing Jrelp in the state variable!!!
 	/* == Read Model State Variable ==
 	 * Try to set initial values to match CiPA one
 	 *
 	 */
-	/*ifstream CiPA_stateVariables_file("."); //TODO: need to match the order!!!
+	std::ifstream CiPA_stateVariables_file("../Chaste/projects/ChonL/CiPA/Chaste_newordherg_states_CL2000.txt"); 
 	double CiPA_stateVariable;
 	std::vector<double> CiPA_stateVariables;
 	while (CiPA_stateVariables_file>> CiPA_stateVariable ) {
 		CiPA_stateVariables.push_back(CiPA_stateVariable);
 	}
-	CiPA_stateVariables_file.close();*/
-	std::vector<double> CiPA_stateVariables = p_model->GetStdVecStateVariables(); //TODO: remove this later.
+	CiPA_stateVariables_file.close();
+	//std::vector<double> CiPA_stateVariables = p_model->GetStdVecStateVariables(); 
 	/* == Re-set Model State Variable ==
 	 * Start with the state variablesthat CiPA use
 	 *
@@ -112,7 +116,7 @@ public:
 	N_Vector dY;
 	dY = p_model->GetStateVariables(); //TODO: Not the best way of initialising dY
 	p_model->EvaluateYDerivatives(getTime, Y, dY);
-	for (int i; i<48; i++) {
+	for (unsigned i; i<YName.size(); i++) {
 		std::cout << YName[i] << ": " << NV_Ith_S(Y,i) << "\n"; //TODO: Print out for now, need to compare with CiPA output
 	}
 
