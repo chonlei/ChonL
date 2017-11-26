@@ -3973,7 +3973,7 @@ PhiCaK = 1{dimensionless}*vffrt*(0.75{dimensionless}*kss*exp(1{dimensionless}*vf
         <variable cmeta:id="Dynamic_hERG_halfmax" initial_value="1" name="halfmax" units="dimensionless"/>
         <variable cmeta:id="Dynamic_hERG_Kt" initial_value="3.50E-05" name="Kt" units="per_millisecond"/>
         <variable cmeta:id="Dynamic_hERG_Vhalf" initial_value="1" name="Vhalf" units="millivolt"/>
-        <variable cmeta:id="Dynamic_hERG_Temp" initial_value="31" name="Temp" units="dimensionless"/>
+        <variable cmeta:id="Dynamic_hERG_Temp" initial_value="37" name="Temp" units="dimensionless"/>
         <!-- Those going in and out-->
         <variable name="v" public_interface="in" units="millivolt"/>
         <variable name="time" public_interface="in" units="millisecond"/>
