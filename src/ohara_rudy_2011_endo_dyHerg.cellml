@@ -3926,25 +3926,25 @@ PhiCaK = 1{dimensionless}*vffrt*(0.75{dimensionless}*kss*exp(1{dimensionless}*vf
  A lot of constants/variables-->
         <variable name="GKr" units="milliS_per_microF"/>
         <variable cmeta:id="Dynamic_hERG_A1" initial_value="0.0264" name="A1" units="per_millisecond"/>
-        <variable cmeta:id="Dynamic_hERG_B1" initial_value="4.63E-05" name="B1" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_B1" initial_value="4.631E-05" name="B1" units="per_millivolt"/>
         <variable cmeta:id="Dynamic_hERG_q1" initial_value="4.843" name="q1" units="dimensionless"/>
-        <variable cmeta:id="Dynamic_hERG_A2" initial_value="4.99E-06" name="A2" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_A2" initial_value="4.986E-06" name="A2" units="per_millisecond"/>
         <variable cmeta:id="Dynamic_hERG_B2" initial_value="-0.004226" name="B2" units="per_millivolt"/>
         <variable cmeta:id="Dynamic_hERG_q2" initial_value="4.23" name="q2" units="dimensionless"/>
         <variable cmeta:id="Dynamic_hERG_A3" initial_value="0.001214" name="A3" units="per_millisecond"/>
         <variable cmeta:id="Dynamic_hERG_B3" initial_value="0.008516" name="B3" units="per_millivolt"/>
         <variable cmeta:id="Dynamic_hERG_q3" initial_value="4.962" name="q3" units="dimensionless"/>
-        <variable cmeta:id="Dynamic_hERG_A4" initial_value="1.85E-05" name="A4" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_A4" initial_value="1.854E-05" name="A4" units="per_millisecond"/>
         <variable cmeta:id="Dynamic_hERG_B4" initial_value="-0.04641" name="B4" units="per_millivolt"/>
         <variable cmeta:id="Dynamic_hERG_q4" initial_value="3.769" name="q4" units="dimensionless"/>
         <variable cmeta:id="Dynamic_hERG_A11" initial_value="0.0007868" name="A11" units="per_millisecond"/>
-        <variable cmeta:id="Dynamic_hERG_B11" initial_value="1.54E-08" name="B11" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_B11" initial_value="1.535E-08" name="B11" units="per_millivolt"/>
         <variable cmeta:id="Dynamic_hERG_q11" initial_value="4.942" name="q11" units="dimensionless"/>
-        <variable cmeta:id="Dynamic_hERG_A21" initial_value="5.46E-06" name="A21" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_A21" initial_value="5.455E-06" name="A21" units="per_millisecond"/>
         <variable cmeta:id="Dynamic_hERG_B21" initial_value="-0.1688" name="B21" units="per_millivolt"/>
         <variable cmeta:id="Dynamic_hERG_q21" initial_value="4.156" name="q21" units="dimensionless"/>
         <variable cmeta:id="Dynamic_hERG_A31" initial_value="0.005509" name="A31" units="per_millisecond"/>
-        <variable cmeta:id="Dynamic_hERG_B31" initial_value="7.77E-09" name="B31" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_B31" initial_value="7.771E-09" name="B31" units="per_millivolt"/>
         <variable cmeta:id="Dynamic_hERG_q31" initial_value="4.22" name="q31" units="dimensionless"/>
         <variable cmeta:id="Dynamic_hERG_A41" initial_value="0.001416" name="A41" units="per_millisecond"/>
         <variable cmeta:id="Dynamic_hERG_B41" initial_value="-0.02877" name="B41" units="per_millivolt"/>
@@ -3953,7 +3953,7 @@ PhiCaK = 1{dimensionless}*vffrt*(0.75{dimensionless}*kss*exp(1{dimensionless}*vf
         <variable cmeta:id="Dynamic_hERG_B51" initial_value="0.008595" name="B51" units="per_millivolt"/>
         <variable cmeta:id="Dynamic_hERG_q51" initial_value="5" name="q51" units="dimensionless"/>
         <variable cmeta:id="Dynamic_hERG_A52" initial_value="0.3181" name="A52" units="per_millisecond"/>
-        <variable cmeta:id="Dynamic_hERG_B52" initial_value="3.61E-08" name="B52" units="per_millivolt"/>
+        <variable cmeta:id="Dynamic_hERG_B52" initial_value="3.613E-08" name="B52" units="per_millivolt"/>
         <variable cmeta:id="Dynamic_hERG_q52" initial_value="4.663" name="q52" units="dimensionless"/>
         <variable cmeta:id="Dynamic_hERG_A53" initial_value="0.149" name="A53" units="per_millisecond"/>
         <variable cmeta:id="Dynamic_hERG_B53" initial_value="0.004668" name="B53" units="per_millivolt"/>
@@ -3971,7 +3971,7 @@ PhiCaK = 1{dimensionless}*vffrt*(0.75{dimensionless}*kss*exp(1{dimensionless}*vf
         <variable cmeta:id="Dynamic_hERG_Ku" initial_value="0" name="Ku" units="per_millisecond"/>
         <variable cmeta:id="Dynamic_hERG_n" initial_value="1" name="n" units="dimensionless"/>
         <variable cmeta:id="Dynamic_hERG_halfmax" initial_value="1" name="halfmax" units="dimensionless"/>
-        <variable cmeta:id="Dynamic_hERG_Kt" initial_value="3.50E-05" name="Kt" units="per_millisecond"/>
+        <variable cmeta:id="Dynamic_hERG_Kt" initial_value="0" name="Kt" units="per_millisecond"/>
         <variable cmeta:id="Dynamic_hERG_Vhalf" initial_value="1" name="Vhalf" units="millivolt"/>
         <variable cmeta:id="Dynamic_hERG_Temp" initial_value="37" name="Temp" units="dimensionless"/>
         <!-- Those going in and out-->
