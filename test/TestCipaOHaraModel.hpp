@@ -125,6 +125,8 @@ public:
 	 *
 	 */
 	p_model->SetStateVariables(CiPA_stateVariables);
+	// Try different tolerances
+	p_model->SetTolerances(1e-7,1e-9);
 
 
 	// Check dy at t=0
