@@ -1,4 +1,8 @@
-       GKrfc        GNaLfc         GNafc         GKsfc
-9.874327e-01  3.971290e-01  1.045809e+00  5.347594e-01
-        GK1fc         PCafc         Gtofc
- 6.296422e-01  1.020773e+00  1.706770e+00
+#       GKrfc        GNaLfc         GNafc         GKsfc        GK1fc         PCafc         Gtofc
+9.874327e-01
+3.971290e-01
+1.045809e+00
+5.347594e-01
+6.296422e-01
+1.020773e+00
+1.706770e+00

@@ -81,10 +81,29 @@ public:
 	//p_regular_stim->SetStartTime(0.0);
 
         /*
-         * == Changing Parameters in the Cell Model ==
+	 * == Get Optimised Scaling Factors == 
+	 * To use their `optimised` scaling factors.
          *
          */
+	/*std::ifstream CiPA_opt_scaling_factors_file(".");
+	double CiPA_opt_scaling_factor;
+	std::vector<double> CiPA_opt_scaling_factors;
+	std::string dummyLine;
+	std::getline(CiPA_opt_scaling_factors_file, dummyLine);
+	while ( CiPA_opt_scaling_factors_file >> CiPA_opt_scaling_factor ) {
+		CiPA_opt_scaling_factors.push_back(CiPA_opt_scaling_factor);
+		//std::cout << CiPA_opt_scaling_factors[i] << "\n" << std::flush;
+	}*/
+	/*
+         * == Changing Parameters in the Cell Model ==
+	 *
+	 */
         //p_model->SetParameter("membrane_slow_delayed_rectifier_potassium_current_conductance", 0.07);
+	// Print out all param
+	/*for (unsigned i; i<p_model->GetNumberOfParameters(); i++) {
+		std::cout << p_model->GetParameter(i);
+	}*/
+	std::cout << p_model->GetNumberOfParameters() << "\n";
 
 
 	// Get the name of the state variables (just in case)
@@ -96,7 +115,7 @@ public:
 	std::ifstream CiPA_stateVariables_file("../Chaste/projects/ChonL/CiPA/Chaste_newordherg_states_CL2000.txt"); 
 	double CiPA_stateVariable;
 	std::vector<double> CiPA_stateVariables;
-	while (CiPA_stateVariables_file>> CiPA_stateVariable ) {
+	while ( CiPA_stateVariables_file >> CiPA_stateVariable ) {
 		CiPA_stateVariables.push_back(CiPA_stateVariable);
 	}
 	CiPA_stateVariables_file.close();
@@ -117,7 +136,7 @@ public:
 	dY = p_model->GetStateVariables(); //TODO: Not the best way of initialising dY
 	p_model->EvaluateYDerivatives(getTime, Y, dY);
 	for (unsigned i; i<YName.size(); i++) {
-		std::cout << YName[i] << ": " << NV_Ith_S(Y,i) << "\n"; //TODO: Print out for now, need to compare with CiPA output
+		std::cout << YName[i] << ": " << NV_Ith_S(dY,i) << "\n"; //TODO: Print out for now, need to compare with CiPA output
 	}
 
 	/* == Double check the state variable ==
