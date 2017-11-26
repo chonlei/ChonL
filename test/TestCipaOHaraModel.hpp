@@ -189,9 +189,10 @@ public:
         std::vector<double> voltages = solution.GetVariableAtIndex(voltage_index);
         CellProperties cell_props(voltages, solution.rGetTimes());
 
-        //double apd = cell_props.GetLastActionPotentialDuration(90);
+        double apd = cell_props.GetLastActionPotentialDuration(90);
 
         //TS_ASSERT_DELTA(apd, 268.92, 1e-2);
+	std::cout << apd << "\n";
 	
 #else
         std::cout << "Cvode is not enabled.\n";
