@@ -141,6 +141,25 @@ public:
 		std::cout << YName[i] << ": " << NV_Ith_S(dY,i) << "\n"; //TODO: Print out for now, need to compare with CiPA output
 	}
 
+	// Print out current for checking
+	/*Cellohara_rudy_2011_endo_dyHergFromCellMLCvode oharady_cvode_system(p_solver, p_stimulus);
+	OdeSolution temp_sol = p_model->Compute(0, 1, 0.01);
+	temp_sol.CalculateDerivedQuantitiesAndParameters(&oharady_cvode_system);
+	std::vector<double> iNa = temp_sol.GetAnyVariable("membrane_fast_sodium_current");
+	std::vector<double> iNaL = temp_sol.GetAnyVariable("membrane_persistent_sodium_current");
+	std::vector<double> ito = temp_sol.GetAnyVariable("membrane_transient_outward_current");
+	std::vector<double> iCaL = temp_sol.GetAnyVariable("membrane_L_type_calcium_current");
+	std::vector<double> iKr = temp_sol.GetAnyVariable("membrane_rapid_delayed_rectifier_potassium_current");
+	std::vector<double> iKs = temp_sol.GetAnyVariable("membrane_slow_delayed_rectifier_potassium_current");
+	std::vector<double> iK1 = temp_sol.GetAnyVariable("membrane_inward_rectifier_potassium_current");
+	std::cout << "iNa: " << iNa[0] << "\n";
+	std::cout << "iNaL??: " << iNaL[0] << "\n";
+	std::cout << "ito: " << ito[0] << "\n";
+	std::cout << "ICaL: " << iCaL[0] << "\n";
+	std::cout << "iKr: " << iKr[0] << "\n";
+	std::cout << "iKs: " << iKs[0] << "\n";
+	std::cout << "iK1: " << iK1[0] << "\n";*/
+
 	/* == Double check the state variable ==
 	 * To make we loaded the state variables properly.
 	 *
