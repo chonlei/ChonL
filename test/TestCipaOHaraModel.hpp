@@ -64,9 +64,23 @@ public:
 
         //boost::shared_ptr<RegularStimulus> p_stimulus;
 	// Use CiPA stimulus (magnitudeOfStimulus, duration, period, startTime, stopTime = DBL_MAX)
-	boost::shared_ptr<RegularStimulus> p_stimulus(new RegularStimulus(-80, 0.5, 2000.0, 0.0));
+	boost::shared_ptr<RegularStimulus> p_stimulus(new RegularStimulus(-80, 0.5, 2000.0, 0.0)); // Not default but match what CiPA use
         boost::shared_ptr<AbstractIvpOdeSolver> p_solver;
         boost::shared_ptr<AbstractCvodeCell> p_model(new Cellohara_rudy_2011_endo_dyHergFromCellMLCvode(p_solver, p_stimulus));
+
+	/*
+	 * == Define Variable Order ==
+	 *
+	 */
+	std::ifstream Chaste_CiPA_var_file("../Chaste/projects/ChonL/CiPA/Chaste_CiPA_var_order.txt");
+	unsigned tmp_unsigned;
+	std::map<unsigned, unsigned> map_Chaste_CiPA_var;
+	unsigned var_i = 0;
+	while ( Chaste_CiPA_var_file >> tmp_unsigned ) {
+		map_Chaste_CiPA_var.insert(std::make_pair( var_i, tmp_unsigned));
+		var_i++;
+	}
+	Chaste_CiPA_var_file.close();
 
         /*
          * Once the model is set up we can tell it to use the the default stimulus from CellML,
@@ -99,11 +113,9 @@ public:
 	 *
 	 */
         //p_model->SetParameter("membrane_slow_delayed_rectifier_potassium_current_conductance", 0.07);
-	// Print out all param
-	/*for (unsigned i; i<p_model->GetNumberOfParameters(); i++) {
-		std::cout << p_model->GetParameter(i);
-	}*/
-	std::cout << p_model->GetNumberOfParameters() << "\n";
+	
+	std::cout << "Number of Chaste parameters: " << p_model->GetNumberOfParameters() << "\n";
+	std::cout << "Number of variables: " << p_model->GetNumberOfStateVariables() << "\n";
 
 
 	// Get the name of the state variables (just in case)
@@ -113,33 +125,50 @@ public:
 	 *
 	 */
 	std::ifstream CiPA_stateVariables_file("../Chaste/projects/ChonL/CiPA/Chaste_newordherg_states_CL2000.txt"); 
-	double CiPA_stateVariable;
+	double tmp_double;
 	std::vector<double> CiPA_stateVariables;
-	while ( CiPA_stateVariables_file >> CiPA_stateVariable ) {
-		CiPA_stateVariables.push_back(CiPA_stateVariable);
+	while ( CiPA_stateVariables_file >> tmp_double ) {
+		CiPA_stateVariables.push_back(tmp_double);
 	}
 	CiPA_stateVariables_file.close();
-	//std::vector<double> CiPA_stateVariables = p_model->GetStdVecStateVariables(); 
+	// Change var order
+	std::vector<double> CiPA_stateVariables_Chaste_order;
+	for (unsigned i=0; i<CiPA_stateVariables.size(); i++) {
+		CiPA_stateVariables_Chaste_order.push_back(CiPA_stateVariables[map_Chaste_CiPA_var[i]]);
+	}
 	/* == Re-set Model State Variable ==
 	 * Start with the state variablesthat CiPA use
 	 *
 	 */
-	p_model->SetStateVariables(CiPA_stateVariables);
+	p_model->SetStateVariables(CiPA_stateVariables_Chaste_order);
 	// Try different tolerances
-	p_model->SetTolerances(1e-7,1e-9);
+	p_model->SetTolerances(1e-6,1e-8);
 
-
-	// Check dy at t=0
-	//std::vector<double> states = p_model->GetstdVecStatVariables();
+	/* 
+	 * == Check dy At t=0 ==
+	 *
+	 */
 	double getTime = 0;
 	N_Vector Y;
 	Y = p_model->GetStateVariables();
 	N_Vector dY;
 	dY = p_model->GetStateVariables(); //TODO: Not the best way of initialising dY
 	p_model->EvaluateYDerivatives(getTime, Y, dY);
+	/*std::cout << "---------- dY\n";
 	for (unsigned i; i<YName.size(); i++) {
 		std::cout << YName[i] << ": " << NV_Ith_S(dY,i) << "\n"; //TODO: Print out for now, need to compare with CiPA output
+	}*/
+	// Read CiPA dy at t=0 results
+	std::ifstream CiPA_dy_t0_file("../Chaste/projects/ChonL/CiPA/fixed/control/Chaste_derivs_t0.txt");
+	std::vector<double> CiPA_dy_t0;
+	while ( CiPA_dy_t0_file >> tmp_double ) {
+		CiPA_dy_t0.push_back(tmp_double);
 	}
+	CiPA_dy_t0_file.close();
+	for (unsigned i=0; i<YName.size(); i++) {
+		TS_ASSERT_DELTA( NV_Ith_S(dY,i), CiPA_dy_t0[map_Chaste_CiPA_var[i]], 1e-10); // This can be quite accurate
+	}	
+
 
 	// Print out current for checking
 	/*Cellohara_rudy_2011_endo_dyHergFromCellMLCvode oharady_cvode_system(p_solver, p_stimulus);
@@ -165,7 +194,7 @@ public:
 	 *
 	 */
 	for (unsigned i; i<CiPA_stateVariables.size(); i++) {
-		TS_ASSERT_DELTA(CiPA_stateVariables[i], p_model->GetStdVecStateVariables()[i], 1e-6);
+		TS_ASSERT_DELTA(CiPA_stateVariables_Chaste_order[i], p_model->GetStdVecStateVariables()[i], 1e-6);
 	}
 
 
@@ -174,17 +203,6 @@ public:
          *
          * Now we solve for the number of paces we are interested in.
          *
-         * The absolute values of start time and end time are typically only relevant for the stimulus, in general
-         * nothing else on the right-hand side of the equations uses time directly.
-         *
-         * i.e. if you have a `RegularStimulus` of period 1000ms then you would get exactly the same results
-         * calling Solve(0,1000,...) twice, as you would calling Solve(0,1000,...) and Solve(1000,2000,...).
-         *
-         * Single cell results can be very sensitive to the sampling time step, because of the steepness of the upstroke.
-         *
-         * For example, try changing the line below to 1 ms. The upstroke velocity that is detected will change
-         * from 339 mV/ms to around 95 mV/ms. APD calculations will only ever be accurate to sampling timestep
-         * for the same reason.
          */
         double max_timestep = 0.1;
         p_model->SetMaxTimestep(max_timestep);
@@ -192,7 +210,7 @@ public:
 	// Set sampling step size as the one CiPA use
         double sampling_timestep = 1.0;
         double start_time = 0.0;
-        double end_time = 1000.0;
+        double end_time = 2000.0;
         OdeSolution solution = p_model->Compute(start_time, end_time, sampling_timestep);
 
         /*
@@ -212,8 +230,43 @@ public:
 
         double apd = cell_props.GetLastActionPotentialDuration(90);
 
-        //TS_ASSERT_DELTA(apd, 268.92, 1e-2);
-	std::cout << apd << "\n";
+        //TS_ASSERT_DELTA(apd, 290.186, 1e-2);
+	std::cout << "APD90: " << apd << "\n";
+
+	/*
+	 * == Compare Votlages with CiPA Output ==
+	 *
+	 */
+        std::ifstream CiPA_v_file("../Chaste/projects/ChonL/CiPA/fixed/control/Chaste_v.txt");
+	std::vector<double> CiPA_voltages;
+        while ( CiPA_v_file >> tmp_double ) {
+		CiPA_voltages.push_back(tmp_double);
+        }
+        CiPA_v_file.close();
+	for (unsigned i=0; i<voltages.size(); i++) {
+		TS_ASSERT_DELTA(voltages[i], CiPA_voltages[i], 1e-2);
+	}
+
+	/*
+	 * == Compare All Variables ==
+	 *
+	 */
+	std::ifstream CiPA_out_file("../Chaste/projects/ChonL/CiPA/fixed/control/Chaste_out.txt");
+	std::vector<std::vector<double>> CiPA_out(voltages.size());
+	for (unsigned i=0; i<voltages.size(); i++) {
+		CiPA_out[i].resize(YName.size());
+		for (unsigned j=0; j<YName.size(); j++) {
+			CiPA_out_file >> CiPA_out[i][j];
+		}
+	}
+	for (unsigned i=1; i<YName.size(); i++) {
+		unsigned state_variable_index = p_model->GetSystemInformation()->GetStateVariableIndex(YName[i]);
+		std::vector<double> state_variable_sol = solution.GetVariableAtIndex(state_variable_index);
+		for (unsigned j=0; j<state_variable_sol.size(); j++) {
+			TS_ASSERT_DELTA(state_variable_sol[j], CiPA_out[j][map_Chaste_CiPA_var[i]], 1e-4);
+		}
+        }
+
 	
 #else
         std::cout << "Cvode is not enabled.\n";
