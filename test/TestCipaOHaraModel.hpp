@@ -187,7 +187,9 @@ public:
 	std::cout << "ICaL: " << iCaL[0] << "\n";
 	std::cout << "iKr: " << iKr[0] << "\n";
 	std::cout << "iKs: " << iKs[0] << "\n";
-	std::cout << "iK1: " << iK1[0] << "\n";*/
+	std::cout << "iK1: " << iK1[0] << "\n";
+	p_model->SetStateVariables(CiPA_stateVariables_Chaste_order);*/
+
 
 	/* == Double check the state variable ==
 	 * To make we loaded the state variables properly.
