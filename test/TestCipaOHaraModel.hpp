@@ -259,6 +259,7 @@ public:
 			CiPA_out_file >> CiPA_out[i][j];
 		}
 	}
+	CiPA_out_file.close();
 	for (unsigned i=1; i<YName.size(); i++) {
 		unsigned state_variable_index = p_model->GetSystemInformation()->GetStateVariableIndex(YName[i]);
 		std::vector<double> state_variable_sol = solution.GetVariableAtIndex(state_variable_index);
@@ -266,6 +267,36 @@ public:
 			TS_ASSERT_DELTA(state_variable_sol[j], CiPA_out[j][map_Chaste_CiPA_var[i]], 1e-4);
 		}
         }
+
+	/* 
+	 * == Check dy At All Times ==
+	 * The most important check!! Compare the RHS.
+	 *
+	 */
+	std::ifstream CiPA_dy_file("../Chaste/projects/ChonL/CiPA/fixed/control/Chaste_derivs.txt");
+	std::vector<std::vector<double>> CiPA_dy(voltages.size());
+	for (unsigned i=0; i<voltages.size(); i++) {
+		CiPA_dy[i].resize(YName.size());
+		for (unsigned j=0; j<YName.size(); j++) {
+			CiPA_dy_file >> CiPA_dy[i][j];
+		}
+	}
+	CiPA_dy_file.close();
+	double computeTime = 0;
+	for (unsigned i=0; i<voltages.size()-1; i++) { // The last one it start pacing again (not in CiPA one)
+		N_Vector CiPA_y = N_VNew_Serial(YName.size());
+		N_Vector Chaste_dy = N_VNew_Serial(YName.size());
+		for (unsigned j=0; j<YName.size(); j++) {
+			// CiPA_dy corresponds to the RHS output at the state of CiPA_out
+			NV_Ith_S(CiPA_y, j) = CiPA_out[i][map_Chaste_CiPA_var[j]];
+		}
+		p_model->EvaluateYDerivatives(computeTime, CiPA_y, Chaste_dy);
+		for (unsigned j=0; j<YName.size(); j++) {
+			TS_ASSERT_DELTA( NV_Ith_S(Chaste_dy,j), CiPA_dy[i][map_Chaste_CiPA_var[j]], 1e-10 );
+		}
+		computeTime++;
+	}
+
 
 	
 #else
