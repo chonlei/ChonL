@@ -94,32 +94,22 @@ public:
         //p_regular_stim->SetPeriod(2000.0);
 	//p_regular_stim->SetStartTime(0.0);
 
-        /*
-	 * == Get Optimised Scaling Factors == 
-	 * To use their `optimised` scaling factors.
-         *
-         */
-	/*std::ifstream CiPA_opt_scaling_factors_file(".");
-	double CiPA_opt_scaling_factor;
-	std::vector<double> CiPA_opt_scaling_factors;
-	std::string dummyLine;
-	std::getline(CiPA_opt_scaling_factors_file, dummyLine);
-	while ( CiPA_opt_scaling_factors_file >> CiPA_opt_scaling_factor ) {
-		CiPA_opt_scaling_factors.push_back(CiPA_opt_scaling_factor);
-		//std::cout << CiPA_opt_scaling_factors[i] << "\n" << std::flush;
-	}*/
-	/*
-         * == Changing Parameters in the Cell Model ==
-	 *
-	 */
-        //p_model->SetParameter("membrane_slow_delayed_rectifier_potassium_current_conductance", 0.07);
-	
 	std::cout << "Number of Chaste parameters: " << p_model->GetNumberOfParameters() << "\n";
 	std::cout << "Number of variables: " << p_model->GetNumberOfStateVariables() << "\n";
 
 
 	// Get the name of the state variables (just in case)
 	const std::vector<std::string> YName = p_model->rGetStateVariableNames();
+	
+	
+	/* 
+	 * ====== Control test ======
+	 * Test the model using default setting and control condition.
+	 *
+	 */
+
+	{
+
 	/* == Read Model State Variable ==
 	 * Try to set initial values to match CiPA one
 	 *
@@ -171,7 +161,8 @@ public:
 
 
 	// Print out current for checking
-	/*Cellohara_rudy_2011_endo_dyHergFromCellMLCvode oharady_cvode_system(p_solver, p_stimulus);
+	/*
+	Cellohara_rudy_2011_endo_dyHergFromCellMLCvode oharady_cvode_system(p_solver, p_stimulus);
 	OdeSolution temp_sol = p_model->Compute(0, 1, 0.01);
 	temp_sol.CalculateDerivedQuantitiesAndParameters(&oharady_cvode_system);
 	std::vector<double> iNa = temp_sol.GetAnyVariable("membrane_fast_sodium_current");
@@ -188,7 +179,8 @@ public:
 	std::cout << "iKr: " << iKr[0] << "\n";
 	std::cout << "iKs: " << iKs[0] << "\n";
 	std::cout << "iK1: " << iK1[0] << "\n";
-	p_model->SetStateVariables(CiPA_stateVariables_Chaste_order);*/
+	p_model->SetStateVariables(CiPA_stateVariables_Chaste_order);
+	*/
 
 
 	/* == Double check the state variable ==
@@ -299,7 +291,212 @@ public:
 		computeTime++;
 	}
 
+	} // End of ====== Control Test ======
 
+
+
+	/* 
+	 * ====== Drug test ======
+	 * Test the model using drug (dofetilide) setting.
+	 *
+	 */
+
+	{
+	
+	/* 
+	 * == Set Drug Condition ==
+	 * Set both conductance and dynamic hERG parameters
+	 *
+	 */
+	double tmp_double;
+	std::string dummyLine;
+	// For drug
+	std::ifstream CiPA_drug_parameters_file("../Chaste/projects/ChonL/CiPA/fixed/dofetilide/Chaste_drug_pars.txt");
+	std::getline(CiPA_drug_parameters_file, dummyLine);
+	std::vector<double> CiPA_drug_parameters;
+	while ( CiPA_drug_parameters_file >> tmp_double ) {
+		CiPA_drug_parameters.push_back(tmp_double);
+	}
+	CiPA_drug_parameters_file.close();
+	// For rescaling opt scaling factors back to default ones
+        std::ifstream CiPA_opt_parameters_file("../Chaste/projects/ChonL/CiPA/Chaste_newordherg_opt_scaling.txt");
+        std::getline(CiPA_opt_parameters_file, dummyLine);
+        std::vector<double> CiPA_opt_parameters;
+        while ( CiPA_opt_parameters_file >> tmp_double ) {
+                CiPA_opt_parameters.push_back(tmp_double);
+        }
+        CiPA_opt_parameters_file.close();
+	// Conductance
+	// GKrfc
+	tmp_double = p_model->GetParameter("membrane_rapid_delayed_rectifier_potassium_current_conductance");
+	tmp_double = tmp_double * CiPA_opt_parameters[0] / CiPA_drug_parameters[0];
+	p_model->SetParameter("membrane_rapid_delayed_rectifier_potassium_current_conductance", tmp_double);
+	// GNaLfc
+	tmp_double = p_model->GetParameter("membrane_persistent_sodium_current_conductance");
+	tmp_double = tmp_double * CiPA_opt_parameters[1] / CiPA_drug_parameters[1];
+	p_model->SetParameter("membrane_persistent_sodium_current_conductance", tmp_double);
+	// GNafc
+	tmp_double = p_model->GetParameter("membrane_fast_sodium_current_conductance");
+	tmp_double = tmp_double * CiPA_opt_parameters[2] / CiPA_drug_parameters[2];
+	p_model->SetParameter("membrane_fast_sodium_current_conductance", tmp_double);
+	// GKsfc
+	tmp_double = p_model->GetParameter("membrane_slow_delayed_rectifier_potassium_current_conductance");
+	tmp_double = tmp_double * CiPA_opt_parameters[3] / CiPA_drug_parameters[3];
+	p_model->SetParameter("membrane_slow_delayed_rectifier_potassium_current_conductance", tmp_double);
+	// GK1fc
+	tmp_double = p_model->GetParameter("membrane_inward_rectifier_potassium_current_conductance");
+        tmp_double = tmp_double * CiPA_opt_parameters[4] / CiPA_drug_parameters[4];
+        p_model->SetParameter("membrane_inward_rectifier_potassium_current_conductance", tmp_double);
+	// PCafc
+	tmp_double = p_model->GetParameter("membrane_L_type_calcium_current_conductance");
+        tmp_double = tmp_double * CiPA_opt_parameters[5] / CiPA_drug_parameters[5];
+        p_model->SetParameter("membrane_L_type_calcium_current_conductance", tmp_double);
+	// Gtofc
+	tmp_double = p_model->GetParameter("membrane_transient_outward_current_conductance");
+        tmp_double = tmp_double * CiPA_opt_parameters[6] / CiPA_drug_parameters[6];
+        p_model->SetParameter("membrane_transient_outward_current_conductance", tmp_double);
+	// dynamic hERG parameters
+	// Kmax
+	p_model->SetParameter("Dynamic_hERG_Kmax", CiPA_drug_parameters[7]);
+	// Ku
+	p_model->SetParameter("Dynamic_hERG_Ku", CiPA_drug_parameters[8]);
+	// n
+	p_model->SetParameter("Dynamic_hERG_n", CiPA_drug_parameters[9]);
+	// halfmax
+	p_model->SetParameter("Dynamic_hERG_halfmax", CiPA_drug_parameters[10]);
+	// Kt
+	p_model->SetParameter("Dynamic_hERG_Kt", CiPA_drug_parameters[11]);
+	// Vhalf
+	p_model->SetParameter("Dynamic_hERG_Vhalf", CiPA_drug_parameters[12]);
+
+
+	/* == Read Model State Variable ==
+	 * Try to set initial values to match CiPA one
+	 *
+	 */
+	std::ifstream CiPA_stateVariables_file("../Chaste/projects/ChonL/CiPA/fixed/dofetilide/Chaste_newordherg_drug_states_CL2000.txt"); 
+	std::vector<double> CiPA_stateVariables;
+	while ( CiPA_stateVariables_file >> tmp_double ) {
+		CiPA_stateVariables.push_back(tmp_double);
+	}
+	CiPA_stateVariables_file.close();
+	// Change var order
+	std::vector<double> CiPA_stateVariables_Chaste_order;
+	for (unsigned i=0; i<CiPA_stateVariables.size(); i++) {
+		CiPA_stateVariables_Chaste_order.push_back(CiPA_stateVariables[map_Chaste_CiPA_var[i]]);
+	}
+	/* == Re-set Model State Variable ==
+	 * Start with the state variablesthat CiPA use
+	 *
+	 */
+	p_model->SetStateVariables(CiPA_stateVariables_Chaste_order);
+	// Try different tolerances
+	p_model->SetTolerances(1e-6,1e-8);
+
+
+        /* == Double check the state variable ==
+         * To make we loaded the state variables properly.
+         *
+         */
+        for (unsigned i; i<CiPA_stateVariables.size(); i++) {
+                TS_ASSERT_DELTA(CiPA_stateVariables_Chaste_order[i], p_model->GetStdVecStateVariables()[i], 1e-6);
+        }
+
+	/* == Run Longer ==
+	 * If interested in how it looks like for drug effect.
+	 * Remember to comment out the tests below, should only pass for the first beat comparison.
+	 */
+	/*
+	SteadyStateRunner steady_runner(p_model,true);
+	steady_runner.SetMaxNumPaces(1000u);
+	steady_runner.RunToSteadyState();
+	*/
+
+        /* == Getting detail for paces of interest ==
+         *
+         * Now we solve for the number of paces we are interested in.
+         *
+         */
+        double max_timestep = 0.1;
+        p_model->SetMaxTimestep(max_timestep);
+
+        // Set sampling step size as the one CiPA use
+        double sampling_timestep = 1.0;
+        double start_time = 0.0;
+        double end_time = 2000.0;
+        OdeSolution solution = p_model->Compute(start_time, end_time, sampling_timestep);
+
+        /*
+         * `p_model` retains the state variables at the end of `Solve`, if you call `Solve` again the state
+         * variables will evolve from their new state, not the original initial conditions.
+         *
+         * Write the data out to a file.
+         */
+        solution.WriteToFile("TestCipaOHaraModel","OHaraDyHergCvode_drug","ms");
+
+        /*
+         * == Calculating APD and Upstroke Velocity ==
+         */
+        unsigned voltage_index = p_model->GetSystemInformation()->GetStateVariableIndex("membrane_voltage");
+        std::vector<double> voltages = solution.GetVariableAtIndex(voltage_index);
+        CellProperties cell_props(voltages, solution.rGetTimes());
+
+        double apd = cell_props.GetLastActionPotentialDuration(90);
+
+        //TS_ASSERT_DELTA(apd, , 1e-2);
+        std::cout << "APD90_drug: " << apd << "\n"; // This is just the first beat!
+
+        /*
+         * == Compare All Variables ==
+         *
+         */
+        std::ifstream CiPA_out_file("../Chaste/projects/ChonL/CiPA/fixed/dofetilide/Chaste_out.txt");
+        std::vector<std::vector<double>> CiPA_out(voltages.size());
+        for (unsigned i=0; i<voltages.size(); i++) {
+                CiPA_out[i].resize(YName.size());
+                for (unsigned j=0; j<YName.size(); j++) {
+                        CiPA_out_file >> CiPA_out[i][j];
+                }
+        }
+        CiPA_out_file.close();
+        for (unsigned i=1; i<YName.size(); i++) {
+                unsigned state_variable_index = p_model->GetSystemInformation()->GetStateVariableIndex(YName[i]);
+                std::vector<double> state_variable_sol = solution.GetVariableAtIndex(state_variable_index);
+                for (unsigned j=0; j<state_variable_sol.size(); j++) {
+                        TS_ASSERT_DELTA(state_variable_sol[j], CiPA_out[j][map_Chaste_CiPA_var[i]], 1e-4);
+                }
+        }
+
+        /* 
+         * == Check dy At All Times ==
+         * The most important check!! Compare the RHS.
+         *
+         */
+        std::ifstream CiPA_dy_file("../Chaste/projects/ChonL/CiPA/fixed/dofetilide/Chaste_derivs.txt");
+        std::vector<std::vector<double>> CiPA_dy(voltages.size());
+        for (unsigned i=0; i<voltages.size(); i++) {
+                CiPA_dy[i].resize(YName.size());
+                for (unsigned j=0; j<YName.size(); j++) {
+                        CiPA_dy_file >> CiPA_dy[i][j];
+                }
+        }
+        CiPA_dy_file.close();
+        double computeTime = 0;
+        for (unsigned i=0; i<voltages.size()-1; i++) { // The last one it start pacing again (not in CiPA one)
+                N_Vector CiPA_y = N_VNew_Serial(YName.size());
+                N_Vector Chaste_dy = N_VNew_Serial(YName.size());
+                for (unsigned j=0; j<YName.size(); j++) {
+                        // CiPA_dy corresponds to the RHS output at the state of CiPA_out
+                        NV_Ith_S(CiPA_y, j) = CiPA_out[i][map_Chaste_CiPA_var[j]];
+                }
+                p_model->EvaluateYDerivatives(computeTime, CiPA_y, Chaste_dy);
+                for (unsigned j=0; j<YName.size(); j++) {
+                        TS_ASSERT_DELTA( NV_Ith_S(Chaste_dy,j), CiPA_dy[i][map_Chaste_CiPA_var[j]], 1e-7 );
+                }
+                computeTime++;
+        }
+
+	} // End of ====== Drug test ======
 	
 #else
         std::cout << "Cvode is not enabled.\n";
