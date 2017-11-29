@@ -62,10 +62,10 @@ public:
 
 #ifdef CHASTE_CVODE
 
-        //boost::shared_ptr<RegularStimulus> p_stimulus;
 	// Use CiPA stimulus (magnitudeOfStimulus, duration, period, startTime, stopTime = DBL_MAX)
 	boost::shared_ptr<RegularStimulus> p_stimulus(new RegularStimulus(-80, 0.5, 2000.0, 0.0)); // Not default but match what CiPA use
         boost::shared_ptr<AbstractIvpOdeSolver> p_solver;
+	// Use CellML version of the CiPA model
         boost::shared_ptr<AbstractCvodeCell> p_model(new Cellohara_rudy_2011_endo_dyHergFromCellMLCvode(p_solver, p_stimulus));
 
 	/*
@@ -82,20 +82,11 @@ public:
 	}
 	Chaste_CiPA_var_file.close();
 
-        /*
-         * Once the model is set up we can tell it to use the the default stimulus from CellML,
-         * (if one has been labelled, you get an exception if not), and return it.*/
-        //boost::shared_ptr<RegularStimulus> p_regular_stim = p_model->UseCellMLDefaultStimulus(); // Should not use the default one...
-
-        /*
-         * Now you can modify certain parameters of the stimulus function, such as the period
-         */
-	// Set CL as the one CiPA use
-        //p_regular_stim->SetPeriod(2000.0);
-	//p_regular_stim->SetStartTime(0.0);
-
-	std::cout << "Number of Chaste parameters: " << p_model->GetNumberOfParameters() << "\n";
+	// Print out what we can see
+	std::cout << "Number of Chaste (visible) parameters: " << p_model->GetNumberOfParameters() << "\n";
 	std::cout << "Number of variables: " << p_model->GetNumberOfStateVariables() << "\n";
+	// Match the number of variables
+	TS_ASSERT_EQUALS( var_i, p_model->GetNumberOfStateVariables() );
 
 
 	// Get the name of the state variables (just in case)
@@ -104,6 +95,7 @@ public:
 	
 	/* 
 	 * ====== Control test ======
+	 *
 	 * Test the model using default setting and control condition.
 	 *
 	 */
@@ -134,20 +126,14 @@ public:
 	// Try different tolerances
 	p_model->SetTolerances(1e-6,1e-8);
 
+
 	/* 
-	 * == Check dy At t=0 ==
-	 *
+	 * == Quick Check dy (RHS) At t=0 ==
 	 */
 	double getTime = 0;
-	N_Vector Y;
-	Y = p_model->GetStateVariables();
-	N_Vector dY;
-	dY = p_model->GetStateVariables(); //TODO: Not the best way of initialising dY
+	N_Vector Y = N_VNew_Serial(YName.size());
+	N_Vector dY = N_VNew_Serial(YName.size());
 	p_model->EvaluateYDerivatives(getTime, Y, dY);
-	/*std::cout << "---------- dY\n";
-	for (unsigned i; i<YName.size(); i++) {
-		std::cout << YName[i] << ": " << NV_Ith_S(dY,i) << "\n"; //TODO: Print out for now, need to compare with CiPA output
-	}*/
 	// Read CiPA dy at t=0 results
 	std::ifstream CiPA_dy_t0_file("../Chaste/projects/ChonL/CiPA/fixed/control/Chaste_derivs_t0.txt");
 	std::vector<double> CiPA_dy_t0;
@@ -173,7 +159,7 @@ public:
 	std::vector<double> iKs = temp_sol.GetAnyVariable("membrane_slow_delayed_rectifier_potassium_current");
 	std::vector<double> iK1 = temp_sol.GetAnyVariable("membrane_inward_rectifier_potassium_current");
 	std::cout << "iNa: " << iNa[0] << "\n";
-	std::cout << "iNaL??: " << iNaL[0] << "\n";
+	std::cout << "iNaL: " << iNaL[0] << "\n";
 	std::cout << "ito: " << ito[0] << "\n";
 	std::cout << "ICaL: " << iCaL[0] << "\n";
 	std::cout << "iKr: " << iKr[0] << "\n";
@@ -194,7 +180,6 @@ public:
 
         /*
          * == Getting detail for paces of interest ==
-         *
          * Now we solve for the number of paces we are interested in.
          *
          */
@@ -207,12 +192,7 @@ public:
         double end_time = 2000.0;
         OdeSolution solution = p_model->Compute(start_time, end_time, sampling_timestep);
 
-        /*
-         * `p_model` retains the state variables at the end of `Solve`, if you call `Solve` again the state
-         * variables will evolve from their new state, not the original initial conditions.
-         *
-         * Write the data out to a file.
-         */
+        // Write the data out to a file.
         solution.WriteToFile("TestCipaOHaraModel","OHaraDyHergCvode","ms");
 
         /*
@@ -224,12 +204,11 @@ public:
 
         double apd = cell_props.GetLastActionPotentialDuration(90);
 
-        //TS_ASSERT_DELTA(apd, 290.186, 1e-2);
+        TS_ASSERT_DELTA(apd, 290.186, 1e-2);
 	std::cout << "APD90: " << apd << "\n";
 
 	/*
 	 * == Compare Votlages with CiPA Output ==
-	 *
 	 */
         std::ifstream CiPA_v_file("../Chaste/projects/ChonL/CiPA/fixed/control/Chaste_v.txt");
 	std::vector<double> CiPA_voltages;
@@ -242,8 +221,7 @@ public:
 	}
 
 	/*
-	 * == Compare All Variables ==
-	 *
+	 * == Compare All Other Variables ==
 	 */
 	std::ifstream CiPA_out_file("../Chaste/projects/ChonL/CiPA/fixed/control/Chaste_out.txt");
 	std::vector<std::vector<double>> CiPA_out(voltages.size());
@@ -297,6 +275,7 @@ public:
 
 	/* 
 	 * ====== Drug test ======
+	 *
 	 * Test the model using drug (dofetilide) setting.
 	 *
 	 */
@@ -326,7 +305,7 @@ public:
                 CiPA_opt_parameters.push_back(tmp_double);
         }
         CiPA_opt_parameters_file.close();
-	// Conductance
+	// Set conductance
 	// GKrfc
 	tmp_double = p_model->GetParameter("membrane_rapid_delayed_rectifier_potassium_current_conductance");
 	tmp_double = tmp_double * CiPA_opt_parameters[0] / CiPA_drug_parameters[0];
@@ -355,7 +334,7 @@ public:
 	tmp_double = p_model->GetParameter("membrane_transient_outward_current_conductance");
         tmp_double = tmp_double * CiPA_opt_parameters[6] / CiPA_drug_parameters[6];
         p_model->SetParameter("membrane_transient_outward_current_conductance", tmp_double);
-	// dynamic hERG parameters
+	// Set dynamic hERG parameters
 	// Kmax
 	p_model->SetParameter("Dynamic_hERG_Kmax", CiPA_drug_parameters[7]);
 	// Ku
@@ -413,7 +392,6 @@ public:
 	*/
 
         /* == Getting detail for paces of interest ==
-         *
          * Now we solve for the number of paces we are interested in.
          *
          */
@@ -426,12 +404,7 @@ public:
         double end_time = 2000.0;
         OdeSolution solution = p_model->Compute(start_time, end_time, sampling_timestep);
 
-        /*
-         * `p_model` retains the state variables at the end of `Solve`, if you call `Solve` again the state
-         * variables will evolve from their new state, not the original initial conditions.
-         *
-         * Write the data out to a file.
-         */
+        // Write the data out to a file.
         solution.WriteToFile("TestCipaOHaraModel","OHaraDyHergCvode_drug","ms",1,false); //Not clean the folder
 
         /*
@@ -448,7 +421,6 @@ public:
 
         /*
          * == Compare All Variables ==
-         *
          */
         std::ifstream CiPA_out_file("../Chaste/projects/ChonL/CiPA/fixed/dofetilide/Chaste_out.txt");
         std::vector<std::vector<double>> CiPA_out(voltages.size());
@@ -498,6 +470,7 @@ public:
 
 	} // End of ====== Drug test ======
 	
+
 #else
         std::cout << "Cvode is not enabled.\n";
 #endif
