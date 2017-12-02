@@ -48,7 +48,7 @@ chaste_libs_used = ['heart']
 
 # Change some flags just for this project
 env = SConsTools.CloneEnv(env)
-env['PYCML_EXTRA_ARGS'] = ['--expose-annotated-variables']
+env['PYCML_EXTRA_ARGS'] = ['--expose-annotated-variables', '--assume-valid']
 
 # Do the build magic
 result = SConsTools.DoProjectSConscript(project_name, chaste_libs_used, globals())
