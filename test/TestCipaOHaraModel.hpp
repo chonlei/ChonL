@@ -36,6 +36,11 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef TESTCIPAOHARAMODEL_HPP_
 #define TESTCIPAOHARAMODEL_HPP_
 
+// Standard libraries - might not need
+#include <fstream>
+#include <iostream>
+#include <string>
+
 #include <cxxtest/TestSuite.h>
 #include "AbstractCvodeCell.hpp"
 #include "AbstractIvpOdeSolver.hpp"
@@ -48,15 +53,10 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* This test is always run sequentially (never in parallel)*/
 #include "FakePetscSetup.hpp"
 
-// Standard libraries - might not need
-#include <fstream>
-#include <iostream>
-#include <string>
-
 class TestCipaOHaraModel : public CxxTest::TestSuite
 {
 public:
-    void TestCipaVersionOfOharaModel() throw(Exception)
+    void TestCipaVersionOfOharaModel()
     {
 
 #ifdef CHASTE_CVODE
@@ -112,12 +112,17 @@ public:
                 CiPA_stateVariables.push_back(tmp_double);
             }
             CiPA_stateVariables_file.close();
+
+            TS_ASSERT_EQUALS(p_model->GetNumberOfStateVariables(), CiPA_stateVariables.size());
+            TS_ASSERT_EQUALS(CiPA_stateVariables.size(), map_Chaste_CiPA_var.size());
+
             // Change var order
             std::vector<double> CiPA_stateVariables_Chaste_order;
             for (unsigned i = 0; i < CiPA_stateVariables.size(); i++)
             {
                 CiPA_stateVariables_Chaste_order.push_back(CiPA_stateVariables[map_Chaste_CiPA_var[i]]);
             }
+
             /* == Re-set Model State Variable ==
 			 * Start with the state variables that CiPA use
 			 *
@@ -130,7 +135,7 @@ public:
 			 * == Quick Check dy (RHS) At t=0 ==
 			 */
             double getTime = 0;
-            N_Vector Y = N_VNew_Serial(YName.size());
+            N_Vector Y = p_model->GetStateVariables();
             N_Vector dY = N_VNew_Serial(YName.size());
             p_model->EvaluateYDerivatives(getTime, Y, dY);
             // Read CiPA dy at t=0 results
@@ -146,6 +151,7 @@ public:
             {
                 TS_ASSERT_DELTA(NV_Ith_S(dY, i), CiPA_dy_t0[map_Chaste_CiPA_var[i]], 1e-10); // This can be quite accurate
             }
+            DeleteVector(dY); // Tidy up memory
 
             // Print out current for checking
             /*
@@ -173,7 +179,7 @@ public:
 			 * To make we loaded the state variables properly.
 			 *
 			 */
-            for (unsigned i; i < CiPA_stateVariables.size(); i++)
+            for (unsigned i = 0u; i < CiPA_stateVariables.size(); i++)
             {
                 TS_ASSERT_DELTA(CiPA_stateVariables_Chaste_order[i], p_model->GetStdVecStateVariables()[i], 1e-6);
             }
@@ -266,10 +272,11 @@ public:
             }
             CiPA_dy_file.close();
             double computeTime = 0;
+            N_Vector CiPA_y = N_VNew_Serial(YName.size());
+            N_Vector Chaste_dy = N_VNew_Serial(YName.size());
             for (unsigned i = 0; i < voltages.size() - 1; i++)
             { // The last one it start pacing again (not in CiPA one)
-                N_Vector CiPA_y = N_VNew_Serial(YName.size());
-                N_Vector Chaste_dy = N_VNew_Serial(YName.size());
+
                 for (unsigned j = 0; j < YName.size(); j++)
                 {
                     // CiPA_dy corresponds to the RHS output at the state of CiPA_out
@@ -282,7 +289,9 @@ public:
                 }
                 computeTime++;
             }
-
+            DeleteVector(Y);
+            DeleteVector(CiPA_y);
+            DeleteVector(Chaste_dy);
         } // End of ====== Control Test ======
 
         std::cout << "End of control test" << std::endl;
@@ -395,7 +404,7 @@ public:
 			 * To make we loaded the state variables properly.
 			 *
 			 */
-            for (unsigned i; i < CiPA_stateVariables.size(); i++)
+            for (unsigned i = 0u; i < CiPA_stateVariables.size(); i++)
             {
                 TS_ASSERT_DELTA(CiPA_stateVariables_Chaste_order[i], p_model->GetStdVecStateVariables()[i], 1e-6);
             }
@@ -480,10 +489,12 @@ public:
             }
             CiPA_dy_file.close();
             double computeTime = 0;
+
+            N_Vector CiPA_y = N_VNew_Serial(YName.size());
+            N_Vector Chaste_dy = N_VNew_Serial(YName.size());
+
             for (unsigned i = 0; i < voltages.size() - 1; i++)
             { // The last one it start pacing again (not in CiPA one)
-                N_Vector CiPA_y = N_VNew_Serial(YName.size());
-                N_Vector Chaste_dy = N_VNew_Serial(YName.size());
                 for (unsigned j = 0; j < YName.size(); j++)
                 {
                     // CiPA_dy corresponds to the RHS output at the state of CiPA_out
@@ -496,6 +507,10 @@ public:
                 }
                 computeTime++;
             }
+
+            DeleteVector(CiPA_y);
+            DeleteVector(Chaste_dy);
+
         } // End of ====== Drug test ======
 
 #else
