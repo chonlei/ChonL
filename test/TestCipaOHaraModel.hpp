@@ -285,7 +285,7 @@ public:
                 p_model->EvaluateYDerivatives(computeTime, CiPA_y, Chaste_dy);
                 for (unsigned j = 0; j < YName.size(); j++)
                 {
-                    TS_ASSERT_DELTA(NV_Ith_S(Chaste_dy, j), CiPA_dy[i][map_Chaste_CiPA_var[j]], 1e-10);
+                    TS_ASSERT_DELTA(NV_Ith_S(Chaste_dy, j), CiPA_dy[i][map_Chaste_CiPA_var[j]], 1e-12);
                 }
                 computeTime++;
             }
@@ -503,13 +503,72 @@ public:
                 p_model->EvaluateYDerivatives(computeTime, CiPA_y, Chaste_dy);
                 for (unsigned j = 0; j < YName.size(); j++)
                 {
-                    TS_ASSERT_DELTA(NV_Ith_S(Chaste_dy, j), CiPA_dy[i][map_Chaste_CiPA_var[j]], 1e-7);
+		    //std::cout << YName[j] << "_state(" << NV_Ith_S(CiPA_y, j) << "," << CiPA_out[i][map_Chaste_CiPA_var[j]]<< ")";
+                    TS_ASSERT_DELTA(NV_Ith_S(Chaste_dy, j), CiPA_dy[i][map_Chaste_CiPA_var[j]], 1e-12);
+		    //std::cout << YName[j] << "(" << NV_Ith_S(Chaste_dy, j) << "," << CiPA_dy[i][map_Chaste_CiPA_var[j]] << ")    ";
                 }
+		//std::cout << "\n";
                 computeTime++;
             }
 
             DeleteVector(CiPA_y);
             DeleteVector(Chaste_dy);
+
+	    /*
+			 * == Check dy After 1000beats ==
+			 * Use prepaced 1000beats variable to compute dy in 
+			 * Chaste and compare with CiPA dy's.
+                         */
+            FileFinder CiPA_out_1000_filename("projects/ChonL/CiPA/fixed/dofetilide_1000beat/Chaste_out.txt", RelativeTo::ChasteSourceRoot);
+            std::ifstream CiPA_out_1000_file(CiPA_out_1000_filename.GetAbsolutePath());
+            std::vector<std::vector<double> > CiPA_out_1000(voltages.size());
+            for (unsigned i = 0; i < voltages.size(); i++)
+            {
+                CiPA_out_1000[i].resize(YName.size());
+                for (unsigned j = 0; j < YName.size(); j++)
+                {
+                    CiPA_out_1000_file >> CiPA_out_1000[i][j];
+                }
+            }
+            CiPA_out_1000_file.close();
+            FileFinder CiPA_dy_1000_filename("projects/ChonL/CiPA/fixed/dofetilide_1000beat/Chaste_derivs.txt", RelativeTo::ChasteSourceRoot);
+            std::ifstream CiPA_dy_1000_file(CiPA_dy_1000_filename.GetAbsolutePath());
+            std::vector<std::vector<double> > CiPA_dy_1000(voltages.size());
+            for (unsigned i = 0; i < voltages.size(); i++)
+            {
+                CiPA_dy_1000[i].resize(YName.size());
+                for (unsigned j = 0; j < YName.size(); j++)
+                {
+                    CiPA_dy_1000_file >> CiPA_dy_1000[i][j];
+                }
+            }
+            CiPA_dy_1000_file.close();
+            computeTime = 0; // reset compute time
+
+            N_Vector CiPA_y_1000 = N_VNew_Serial(YName.size());
+            N_Vector Chaste_dy_1000 = N_VNew_Serial(YName.size());
+
+            for (unsigned i = 0; i < voltages.size() - 1; i++)
+            { // The last one it start pacing again (not in CiPA one)
+                for (unsigned j = 0; j < YName.size(); j++)
+                {
+                    // CiPA_dy corresponds to the RHS output at the state of CiPA_out
+                    NV_Ith_S(CiPA_y_1000, j) = CiPA_out_1000[i][map_Chaste_CiPA_var[j]];
+                }
+                p_model->EvaluateYDerivatives(computeTime, CiPA_y_1000, Chaste_dy_1000);
+                for (unsigned j = 0; j < YName.size(); j++)
+                {
+                    TS_ASSERT_DELTA(NV_Ith_S(Chaste_dy_1000, j), CiPA_dy_1000[i][map_Chaste_CiPA_var[j]], 1e-12);
+		    //if (i < 1000) std::cout << YName[j] << "(" << NV_Ith_S(Chaste_dy_1000, j) << "," << CiPA_dy_1000[i][map_Chaste_CiPA_var[j]] << ")    ";
+                }
+		//std::cout << "\n";
+                computeTime++;
+            }
+
+            DeleteVector(CiPA_y_1000);
+            DeleteVector(Chaste_dy_1000);
+
+
 
         } // End of ====== Drug test ======
 
