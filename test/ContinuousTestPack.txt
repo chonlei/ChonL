@@ -1,2 +1,3 @@
 TestCipaOHaraModel.hpp
+TestCipaOHaraModelSolver.hpp
 TestHello.hpp
