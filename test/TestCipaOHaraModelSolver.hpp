@@ -152,47 +152,6 @@ public:
             unsigned voltage_index = p_model->GetSystemInformation()->GetStateVariableIndex("membrane_voltage");
             std::vector<double> voltages = solution.GetVariableAtIndex(voltage_index);
 
-            /*
-			 * == Compare Voltages with CiPA Output ==
-			 */
-            FileFinder CiPA_v_filename("projects/ChonL/CiPA/fixed/control/Chaste_v.txt", RelativeTo::ChasteSourceRoot);
-            std::ifstream CiPA_v_file(CiPA_v_filename.GetAbsolutePath());
-            std::vector<double> CiPA_voltages;
-            while (CiPA_v_file >> tmp_double)
-            {
-                CiPA_voltages.push_back(tmp_double);
-            }
-            CiPA_v_file.close();
-            for (unsigned i = 0; i < voltages.size(); i++)
-            {
-                TS_ASSERT_DELTA(voltages[i], CiPA_voltages[i], 1e-2);
-            }
-
-            /*
-			 * == Compare All Other Variables ==
-			 */
-            FileFinder CiPA_out_filename("projects/ChonL/CiPA/fixed/control/Chaste_out.txt", RelativeTo::ChasteSourceRoot);
-            std::ifstream CiPA_out_file(CiPA_out_filename.GetAbsolutePath());
-            std::vector< std::vector<double> > CiPA_out(voltages.size());
-            for (unsigned i = 0; i < voltages.size(); i++)
-            {
-                CiPA_out[i].resize(YName.size());
-                for (unsigned j = 0; j < YName.size(); j++)
-                {
-                    CiPA_out_file >> CiPA_out[i][j];
-                }
-            }
-            CiPA_out_file.close();
-            for (unsigned i = 1; i < YName.size(); i++)
-            {
-                unsigned state_variable_index = p_model->GetSystemInformation()->GetStateVariableIndex(YName[i]);
-                std::vector<double> state_variable_sol = solution.GetVariableAtIndex(state_variable_index);
-                for (unsigned j = 0; j < state_variable_sol.size(); j++)
-                {
-                    TS_ASSERT_DELTA(state_variable_sol[j], CiPA_out[j][map_Chaste_CiPA_var[i]], 1e-4);
-                }
-            }
-
 	    /*
 	     		 * == Get Reference Solution ==
 			 */
@@ -210,6 +169,9 @@ public:
 	    /*
 	     		 * == Compare Different Tol ==
 			 */
+            FileFinder tol_test_filename("projects/ChonL/plot_output", RelativeTo::ChasteSourceRoot);
+            std::ofstream tol_test_file(tol_test_filename.GetAbsolutePath()+"solver_tol_test.txt");
+	    tol_test_file << "# tol    Chaste_err    CiPA_err \n";
 	    for (unsigned toli = 0; toli < 10; toli++)
 	    {
                 /* == Re-set Model State Variable ==
@@ -221,7 +183,6 @@ public:
                 p_model->SetTolerances(1e-6*pow(1e-1,toli), 1e-6*pow(1e-1,toli)); 
 	        p_model->SetMaxSteps(1e8); // Use default
 
-		//TODO
 		// Load pre-saved different tol solution from CiPA
                 FileFinder CiPA_out_tol_filename("projects/ChonL/CiPA/fixed/control_" + std::to_string(toli) + "/Chaste_out.txt", RelativeTo::ChasteSourceRoot);
                 std::ifstream CiPA_out_tol_file(CiPA_out_tol_filename.GetAbsolutePath());
@@ -257,6 +218,7 @@ public:
 			state_variable_test_tol.push_back(state_variable_sol[j]);
 		    }
 		}
+
 		double err_Chaste = 0;
 		double err_CiPA = 0;
 		for (unsigned i = 0; i < state_variable_ref.size(); i++)
@@ -264,9 +226,12 @@ public:
 		    err_Chaste += abs(state_variable_ref[i] - state_variable_test_tol[i]);
 		    err_CiPA += abs(state_variable_ref[i] - test_CiPA_out[i]);
 		}
-		std::cout << "At " << toli << ", error = " << err_Chaste << ", " << err_CiPA << "\n";
-	    }
 
+		std::cout << "At " << toli << ", error = (Chaste) " << err_Chaste << ", (CiPA) " << err_CiPA << "\n";
+		tol_test_file << 1e-6*pow(1e-1,toli) << "    " << err_Chaste << "    " << err_CiPA << "\n";
+		
+	    } // Done tol test
+	    tol_test_file.close();
 
         } // End of ====== Control Test ======
 
