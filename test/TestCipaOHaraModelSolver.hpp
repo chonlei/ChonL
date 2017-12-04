@@ -53,10 +53,10 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* This test is always run sequentially (never in parallel)*/
 #include "FakePetscSetup.hpp"
 
-class TestCipaOHaraModel : public CxxTest::TestSuite
+class TestCipaOHaraModelSolver : public CxxTest::TestSuite
 {
 public:
-    void TestCipaVersionOfOharaModel()
+    void TestCipaVersionOfOharaModelSolver()
     {
 
 #ifdef CHASTE_CVODE
@@ -173,7 +173,7 @@ public:
 			 */
             FileFinder CiPA_out_filename("projects/ChonL/CiPA/fixed/control/Chaste_out.txt", RelativeTo::ChasteSourceRoot);
             std::ifstream CiPA_out_file(CiPA_out_filename.GetAbsolutePath());
-            std::vector<std::vector<double> > CiPA_out(voltages.size());
+            std::vector< std::vector<double> > CiPA_out(voltages.size());
             for (unsigned i = 0; i < voltages.size(); i++)
             {
                 CiPA_out[i].resize(YName.size());
@@ -218,9 +218,34 @@ public:
 			     */
                 p_model->SetStateVariables(CiPA_stateVariables_Chaste_order);
                 // Try different tolerances
-                p_model->SetTolerances(1e-6*pow(1e-1,toli), 1e-6*pow(1e-1,toli)); //TODO
+                p_model->SetTolerances(1e-6*pow(1e-1,toli), 1e-6*pow(1e-1,toli)); 
 	        p_model->SetMaxSteps(1e8); // Use default
 
+		//TODO
+		// Load pre-saved different tol solution from CiPA
+                FileFinder CiPA_out_tol_filename("projects/ChonL/CiPA/fixed/control_" + std::to_string(toli) + "/Chaste_out.txt", RelativeTo::ChasteSourceRoot);
+                std::ifstream CiPA_out_tol_file(CiPA_out_tol_filename.GetAbsolutePath());
+                std::vector< std::vector<double> > test_CiPA_out_tmp(voltages.size());
+                for (unsigned i = 0; i < voltages.size(); i++)
+                {
+                    test_CiPA_out_tmp[i].resize(YName.size());
+                    for (unsigned j = 0; j < YName.size(); j++)
+                    {
+			CiPA_out_tol_file >> test_CiPA_out_tmp[i][j];
+                    }
+                }
+                CiPA_out_tol_file.close();
+                std::vector<double> test_CiPA_out;
+                for (unsigned i = 0; i < YName.size(); i++)
+                {
+                    for (unsigned j = 0; j < voltages.size(); j++)
+                    {
+			CiPA_out_tol_file >> tmp_double;
+                        test_CiPA_out.push_back(test_CiPA_out_tmp[j][map_Chaste_CiPA_var[i]]);
+                    }
+                }
+
+		// Run again in Chaste
             	OdeSolution test_solution = p_model->Compute(start_time, end_time, sampling_timestep);
 		std::vector<double> state_variable_test_tol;
 		for (unsigned i = 0; i < YName.size(); i++)
@@ -232,12 +257,14 @@ public:
 			state_variable_test_tol.push_back(state_variable_sol[j]);
 		    }
 		}
-		double err = 0;
+		double err_Chaste = 0;
+		double err_CiPA = 0;
 		for (unsigned i = 0; i < state_variable_ref.size(); i++)
 		{
-		    err += abs(state_variable_ref[i] - state_variable_test_tol[i]);
+		    err_Chaste += abs(state_variable_ref[i] - state_variable_test_tol[i]);
+		    err_CiPA += abs(state_variable_ref[i] - test_CiPA_out[i]);
 		}
-		std::cout << "At " << toli << ", error = " << err << "\n";
+		std::cout << "At " << toli << ", error = " << err_Chaste << ", " << err_CiPA << "\n";
 	    }
 
 
