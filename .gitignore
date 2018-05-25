@@ -4,3 +4,8 @@ build/*
 
 # for my self
 formyself
+
+# Compiled executables
+apps/src/ExampleApp
+apps/src/ExampleApp.o
+
